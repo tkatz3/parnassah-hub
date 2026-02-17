@@ -195,16 +195,17 @@
         </div>
       </div>
 
-      <!-- Step 3: Success -->
+      <!-- Step 3: Check Email -->
       <div id="seeker-step-3" class="space-y-4 hidden">
         <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center">
-          <div class="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <div class="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">You're all set!</h2>
-          <p class="text-sm text-gray-500 mb-6">Your profile has been created. Start exploring opportunities in the community.</p>
-          <a href="find-jobs.html" class="w-full inline-flex items-center justify-center py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition mb-3">Browse Jobs</a>
-          <a href="jobseeker-dashboard.html" class="w-full inline-flex items-center justify-center py-3 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Go to My Dashboard</a>
+          <h2 class="text-xl font-bold text-gray-900 mb-2">Check your email!</h2>
+          <p class="text-sm text-gray-500 mb-2">We sent a confirmation link to <strong id="seeker-confirm-email"></strong>.</p>
+          <p class="text-sm text-gray-500 mb-6">Click the link to confirm your account, then sign in.</p>
+          <a href="find-jobs.html" class="w-full inline-flex items-center justify-center py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition mb-3">Browse Jobs While You Wait</a>
+          <button onclick="showSignIn()" class="w-full inline-flex items-center justify-center py-3 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Sign In After Confirming</button>
         </div>
       </div>
     </div>
@@ -289,16 +290,17 @@
         </div>
       </div>
 
-      <!-- Step 3: Success -->
+      <!-- Step 3: Check Email -->
       <div id="employer-step-3" class="space-y-4 hidden">
         <div class="bg-white rounded-2xl border border-gray-200 p-8 text-center">
           <div class="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"/></svg>
+            <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
           </div>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">Company registered!</h2>
-          <p class="text-sm text-gray-500 mb-6">Your employer account is ready. Post your first job listing and connect with qualified candidates.</p>
-          <a href="post-job.html" class="w-full inline-flex items-center justify-center py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition mb-3">Post Your First Job</a>
-          <a href="employer-dashboard.html" class="w-full inline-flex items-center justify-center py-3 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Go to Employer Dashboard</a>
+          <h2 class="text-xl font-bold text-gray-900 mb-2">Check your email!</h2>
+          <p class="text-sm text-gray-500 mb-2">We sent a confirmation link to <strong id="employer-confirm-email"></strong>.</p>
+          <p class="text-sm text-gray-500 mb-6">Click the link in your email to confirm your account, then sign in to post jobs.</p>
+          <button onclick="showSignIn()" class="w-full inline-flex items-center justify-center py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition mb-3">Sign In After Confirming</button>
+          <a href="find-jobs.html" class="w-full inline-flex items-center justify-center py-3 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Browse the Job Board</a>
         </div>
       </div>
     </div>
@@ -420,14 +422,18 @@
     if (error) { showError(error.message); btn.textContent = 'Create Account →'; btn.disabled = false; return }
 
     const uid = data.user.id
-    await sb.from('profiles').update({ first_name: first, last_name: last, phone }).eq('id', uid)
-    await sb.from('seeker_profiles').insert({
-      user_id: uid,
-      preferred_categories: cats.length ? cats : null,
-      preferred_locations:  locs.length ? locs : null,
-      preferred_types:      types.length ? types : null,
-    })
+    // Update profile and seeker prefs (best-effort; may require confirmed session)
+    if (data.session) {
+      await sb.from('profiles').update({ first_name: first, last_name: last, phone }).eq('id', uid)
+      await sb.from('seeker_profiles').insert({
+        user_id: uid,
+        preferred_categories: cats.length ? cats : null,
+        preferred_locations:  locs.length ? locs : null,
+        preferred_types:      types.length ? types : null,
+      })
+    }
 
+    document.getElementById('seeker-confirm-email').textContent = email
     seekerNextStep(3)
   }
 
@@ -456,15 +462,19 @@
     if (error) { showError(error.message); btn.textContent = 'Create Account →'; btn.disabled = false; return }
 
     const uid = data.user.id
-    await sb.from('profiles').update({ first_name: first, last_name: last, phone }).eq('id', uid)
-    await sb.from('companies').insert({
-      user_id: uid,
-      name: company,
-      website: website || null,
-      industry: industry || null,
-      description: desc || null,
-    })
+    // Update profile and company (best-effort; may require confirmed session)
+    if (data.session) {
+      await sb.from('profiles').update({ first_name: first, last_name: last, phone }).eq('id', uid)
+      await sb.from('companies').insert({
+        user_id: uid,
+        name: company,
+        website: website || null,
+        industry: industry || null,
+        description: desc || null,
+      })
+    }
 
+    document.getElementById('employer-confirm-email').textContent = email
     employerNextStep(3)
   }
 
