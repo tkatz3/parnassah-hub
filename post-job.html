@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post a Job — ParnassaHub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:'#ebf3ff',100:'#d6e8ff',200:'#add0ff',
+              300:'#85b8ff',400:'#5c9ef5',500:'#2877C9',
+              600:'#1d62aa',700:'#154d8b',
+            }
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    input:focus, textarea:focus, select:focus { outline:none; }
+    .step-item { position:relative; }
+    .step-item:not(:last-child)::after {
+      content:''; position:absolute; top:14px; left:calc(50% + 20px);
+      width:calc(100% - 28px); height:2px; background:#e5e7eb;
+    }
+    .step-item.done::after { background:#2877C9; }
+    .step-item.active::after { background: linear-gradient(to right,#2877C9,#e5e7eb); }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col">
+
+<!-- ─── TOP BAR ─── -->
+<header class="bg-white border-b border-gray-100 py-4 px-6 flex items-center justify-between">
+  <a href="employer-dashboard.html">
+    <img src="parnassah hub.png" alt="ParnassaHub" class="h-14 w-auto" />
+  </a>
+  <div class="flex items-center gap-3 text-sm text-gray-500">
+    <a href="employer-dashboard.html" class="inline-flex items-center gap-1 hover:text-gray-700">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Back to Dashboard
+    </a>
+  </div>
+</header>
+
+<!-- ─── MAIN ─── -->
+<main class="flex-1 py-10 px-4">
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Title -->
+    <div class="text-center mb-8">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">Post a New Job</h1>
+      <p class="text-gray-500 text-sm">Fill in the details to publish your listing on ParnassaHub</p>
+    </div>
+
+    <!-- ─── STEP INDICATOR ─── -->
+    <div class="flex justify-center gap-0 mb-10">
+      <div id="si1" class="step-item done flex flex-col items-center gap-1 w-28 text-center">
+        <div class="w-7 h-7 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center z-10">1</div>
+        <span class="text-xs font-medium text-brand-500">Job Details</span>
+      </div>
+      <div id="si2" class="step-item flex flex-col items-center gap-1 w-28 text-center">
+        <div id="dot2" class="w-7 h-7 rounded-full bg-gray-200 text-gray-400 text-xs font-bold flex items-center justify-center z-10">2</div>
+        <span id="sl2" class="text-xs font-medium text-gray-400">Description</span>
+      </div>
+      <div id="si3" class="step-item flex flex-col items-center gap-1 w-28 text-center">
+        <div id="dot3" class="w-7 h-7 rounded-full bg-gray-200 text-gray-400 text-xs font-bold flex items-center justify-center z-10">3</div>
+        <span id="sl3" class="text-xs font-medium text-gray-400">Review &amp; Publish</span>
+      </div>
+    </div>
+
+    <!-- ─── STEP 1: Job Details ─── -->
+    <div id="step-1" class="space-y-5">
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <h3 class="text-sm font-bold text-gray-700">Basic Information</h3>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Job Title *</label>
+          <input type="text" placeholder="e.g. Senior Accountant, Office Manager…" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Category *</label>
+            <select class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 focus:outline-none transition appearance-none">
+              <option value="" disabled selected>Select category…</option>
+              <option>Accounting &amp; Auditing</option>
+              <option>Admin Support</option>
+              <option>Administration &amp; Middle Management</option>
+              <option>Education</option>
+              <option>Finance &amp; Banking</option>
+              <option>Human Resources</option>
+              <option>Marketing / Advertising / PR</option>
+              <option>Office Manager &amp; Secretary</option>
+              <option>Operations</option>
+              <option>Real Estate</option>
+              <option>Religious</option>
+              <option>Sales &amp; Marketing</option>
+              <option>Secretarial / Clerical / Administrative</option>
+              <option>Transportation &amp; Auto Industry</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Vacancy Type *</label>
+            <select class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 focus:outline-none transition appearance-none">
+              <option value="" disabled selected>Select type…</option>
+              <option>Full Time</option>
+              <option>Part-Time</option>
+              <option>Commission</option>
+              <option>Volunteer</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Location *</label>
+          <select class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 focus:outline-none transition appearance-none">
+            <option value="" disabled selected>Select location…</option>
+            <option>Greater Lakewood Area</option>
+            <option>Linden NJ</option>
+            <option>Monsey</option>
+            <option>New Jersey</option>
+            <option>New York City</option>
+            <option>Newark</option>
+            <option>Northern New Jersey</option>
+            <option>Remote</option>
+            <option>Union County</option>
+            <option>Worldwide</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <h3 class="text-sm font-bold text-gray-700">Compensation</h3>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Salary / Rate From</label>
+            <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:border-brand-400 transition">
+              <span class="px-3 text-gray-400 text-sm bg-gray-50 border-r border-gray-200 py-2.5 shrink-0">$</span>
+              <input type="number" placeholder="50,000" class="flex-1 px-3 py-2.5 text-sm focus:outline-none" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Salary / Rate To</label>
+            <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden focus-within:border-brand-400 transition">
+              <span class="px-3 text-gray-400 text-sm bg-gray-50 border-r border-gray-200 py-2.5 shrink-0">$</span>
+              <input type="number" placeholder="70,000" class="flex-1 px-3 py-2.5 text-sm focus:outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Pay Period</label>
+          <div class="flex flex-wrap gap-2">
+            <label class="flex items-center gap-1.5 cursor-pointer text-xs border border-gray-200 rounded-full px-3 py-1.5 hover:border-brand-300 hover:bg-brand-50 transition">
+              <input type="radio" name="payperiod" value="annual" style="accent-color:#2877C9" /> Annual
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-xs border border-gray-200 rounded-full px-3 py-1.5 hover:border-brand-300 hover:bg-brand-50 transition">
+              <input type="radio" name="payperiod" value="hourly" style="accent-color:#2877C9" /> Hourly
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-xs border border-gray-200 rounded-full px-3 py-1.5 hover:border-brand-300 hover:bg-brand-50 transition">
+              <input type="radio" name="payperiod" value="daily" style="accent-color:#2877C9" /> Daily
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-xs border border-gray-200 rounded-full px-3 py-1.5 hover:border-brand-300 hover:bg-brand-50 transition">
+              <input type="radio" name="payperiod" value="commission" style="accent-color:#2877C9" /> Commission Only
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-xs border border-gray-200 rounded-full px-3 py-1.5 hover:border-brand-300 hover:bg-brand-50 transition">
+              <input type="radio" name="payperiod" value="unpaid" style="accent-color:#2877C9" /> Unpaid / Volunteer
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="goStep(2)" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">
+        Continue to Description →
+      </button>
+    </div>
+
+    <!-- ─── STEP 2: Description ─── -->
+    <div id="step-2" class="space-y-5 hidden">
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-5">
+        <h3 class="text-sm font-bold text-gray-700">Job Description</h3>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Full Job Description *</label>
+          <textarea rows="8" placeholder="Describe the role, responsibilities, requirements, and any other relevant details. Be clear and honest — quality candidates will appreciate the transparency." class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition resize-none leading-relaxed"></textarea>
+          <p class="text-xs text-gray-400 mt-1.5">Minimum 100 characters. Good descriptions attract better candidates.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Key Requirements</label>
+          <textarea rows="4" placeholder="• 3+ years experience in accounting&#10;• Proficiency in QuickBooks&#10;• Strong attention to detail" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition resize-none leading-relaxed"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">How to Apply</label>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs text-gray-500 mb-1 block">Contact Email</label>
+              <input type="email" placeholder="hr@yourcompany.com" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+            </div>
+            <div>
+              <label class="text-xs text-gray-500 mb-1 block">Contact Phone (optional)</label>
+              <input type="tel" placeholder="(908) 555-0100" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pledge notice -->
+        <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 text-xs text-amber-800 leading-relaxed">
+          <strong>Community Pledge:</strong> By posting on ParnassaHub, you confirm this is an authentic, active opportunity. Please post only roles you are genuinely hiring for. This keeps our platform trustworthy for everyone in the community.
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="goStep(1)" class="flex-1 py-3.5 border border-gray-200 text-gray-600 font-semibold text-sm rounded-xl hover:bg-gray-50 transition">← Back</button>
+        <button onclick="goStep(3)" class="flex-1 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">Review Listing →</button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 3: Review & Publish ─── -->
+    <div id="step-3" class="space-y-5 hidden">
+      <div class="bg-white rounded-2xl border border-gray-200 p-6">
+        <h3 class="text-sm font-bold text-gray-700 mb-4">Listing Preview</h3>
+
+        <!-- Preview card -->
+        <div class="border border-gray-200 rounded-xl p-5 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-sm font-bold text-brand-600">TC</div>
+            <span class="text-xs font-semibold px-2.5 py-1 bg-green-50 text-green-700 rounded-full">Full Time</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-gray-900">Senior Accountant</h4>
+            <p class="text-sm text-gray-500">TechCorp Solutions</p>
+          </div>
+          <div class="flex flex-wrap gap-3 text-xs text-gray-500">
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>Union County, NJ</span>
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>$60,000 – $80,000 / yr</span>
+            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2h2z"/></svg>Accounting &amp; Auditing</span>
+          </div>
+          <p class="text-sm text-gray-500 leading-relaxed pt-1 border-t border-gray-100 mt-2">
+            Looking for an experienced Senior Accountant to join our growing team. The ideal candidate will have 5+ years of experience in public accounting and strong Excel skills…
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
+        <h3 class="text-sm font-bold text-gray-700">Confirm &amp; Publish</h3>
+
+        <div class="flex items-start gap-3">
+          <input type="checkbox" id="pledgeCheck" class="w-4 h-4 mt-0.5 shrink-0" style="accent-color:#2877C9" />
+          <label for="pledgeCheck" class="text-sm text-gray-600 cursor-pointer leading-relaxed">
+            I confirm this is a real, active job opportunity. I agree to ParnassaHub's community standards and will respond to qualified applicants in good faith.
+          </label>
+        </div>
+
+        <div class="bg-brand-50 border border-brand-100 rounded-xl p-3 text-xs text-brand-700 leading-relaxed">
+          <strong>Free to post!</strong> ParnassaHub is volunteer-run. Posting a job is completely free — we simply ask for authenticity and respect in all interactions.
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="goStep(2)" class="flex-1 py-3.5 border border-gray-200 text-gray-600 font-semibold text-sm rounded-xl hover:bg-gray-50 transition">← Back</button>
+        <button onclick="publishJob()" class="flex-1 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">
+          Publish Job Listing ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── SUCCESS STATE ─── -->
+    <div id="step-success" class="hidden">
+      <div class="bg-white rounded-2xl border border-gray-200 p-10 text-center">
+        <div class="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Your job is live!</h2>
+        <p class="text-sm text-gray-500 mb-7 max-w-sm mx-auto">
+          Your listing has been published. Qualified candidates in the community can now apply. You'll receive notifications as applications come in.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="employer-dashboard.html" class="inline-flex items-center justify-center py-3 px-6 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">
+            Go to Dashboard
+          </a>
+          <button onclick="resetForm()" class="inline-flex items-center justify-center py-3 px-6 border border-gray-200 text-gray-600 font-medium text-sm rounded-xl hover:bg-gray-50 transition">
+            Post Another Job
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="text-center py-5 text-xs text-gray-400 border-t border-gray-100">
+  &copy; 2025 ParnassaHub &middot; Volunteer-run &middot; Sponsored by <a href="https://omrgroup.net" class="hover:text-gray-600">ORTEK Group</a>
+</footer>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 3;
+
+  function goStep(n) {
+    document.getElementById('step-' + currentStep).classList.add('hidden');
+    document.getElementById('step-' + n).classList.remove('hidden');
+
+    // Update step indicators
+    for (let i = 1; i <= totalSteps; i++) {
+      const dot = document.getElementById('dot' + i);
+      const label = document.getElementById('sl' + i);
+      const si = document.getElementById('si' + i);
+      if (!dot) continue;
+
+      if (i < n) {
+        dot.className = 'w-7 h-7 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center z-10';
+        dot.innerHTML = '✓';
+        if (label) { label.className = 'text-xs font-medium text-brand-500'; }
+        si.className = 'step-item done flex flex-col items-center gap-1 w-28 text-center';
+      } else if (i === n) {
+        dot.className = 'w-7 h-7 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center z-10';
+        dot.innerHTML = i;
+        if (label) { label.className = 'text-xs font-medium text-brand-500'; }
+        si.className = 'step-item active flex flex-col items-center gap-1 w-28 text-center';
+      } else {
+        dot.className = 'w-7 h-7 rounded-full bg-gray-200 text-gray-400 text-xs font-bold flex items-center justify-center z-10';
+        dot.innerHTML = i;
+        if (label) { label.className = 'text-xs font-medium text-gray-400'; }
+        si.className = 'step-item flex flex-col items-center gap-1 w-28 text-center';
+      }
+    }
+    currentStep = n;
+    window.scrollTo(0, 0);
+  }
+
+  // Dot 1 is special — always done
+  document.getElementById('si1').className = 'step-item done flex flex-col items-center gap-1 w-28 text-center';
+
+  function publishJob() {
+    document.getElementById('step-3').classList.add('hidden');
+    document.getElementById('step-success').classList.remove('hidden');
+    // Hide step indicator on success
+    document.querySelector('.flex.justify-center.gap-0.mb-10').classList.add('invisible');
+    window.scrollTo(0, 0);
+  }
+
+  function resetForm() {
+    document.getElementById('step-success').classList.add('hidden');
+    document.querySelector('.flex.justify-center.gap-0.mb-10').classList.remove('invisible');
+    goStep(1);
+  }
+</script>
+
+</body>
+</html>
