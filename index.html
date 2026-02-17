@@ -4,32 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ParnassaHub — Find Your Next Opportunity</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            brand: {
-              50:  '#ebf3ff',
-              100: '#d6e8ff',
-              200: '#add0ff',
-              300: '#85b8ff',
-              400: '#5c9ef5',
-              500: '#2877C9',
-              600: '#1d62aa',
-              700: '#154d8b',
-              800: '#0e376c',
-              900: '#08224e',
-            }
+            brand: { 50:'#ebf3ff',100:'#d6e8ff',200:'#add0ff',300:'#85b8ff',400:'#5c9ef5',500:'#2877C9',600:'#1d62aa',700:'#154d8b' }
           },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          },
-          borderRadius: {
-            xl: '12px',
-            '2xl': '16px',
-          }
+          fontFamily: { sans: ['Inter','system-ui','sans-serif'] },
+          borderRadius: { xl:'12px','2xl':'16px' }
         }
       }
     }
@@ -38,101 +23,78 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .hero-gradient { background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 60%, #f8fafc 100%); }
-    .card-hover { transition: box-shadow .2s ease, transform .2s ease; }
-    .card-hover:hover { box-shadow: 0 8px 30px rgba(40,119,201,.12); transform: translateY(-2px); }
-    .nav-link { position: relative; }
-    .nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:#2877C9; transition:width .2s; }
+    body { font-family:'Inter',system-ui,sans-serif; }
+    .hero-gradient { background:linear-gradient(135deg,#f0f7ff 0%,#ffffff 60%,#f8fafc 100%); }
+    .card-hover { transition:box-shadow .2s ease,transform .2s ease; }
+    .card-hover:hover { box-shadow:0 8px 30px rgba(40,119,201,.12); transform:translateY(-2px); }
+    .nav-link { position:relative; }
+    .nav-link::after { content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:#2877C9;transition:width .2s; }
     .nav-link:hover::after { width:100%; }
-    input:focus, select:focus { outline: none; }
-    .search-shadow { box-shadow: 0 4px 24px rgba(40,119,201,.15); }
+    .search-shadow { box-shadow:0 4px 24px rgba(40,119,201,.15); }
   </style>
 </head>
 <body class="bg-white text-gray-900 antialiased">
 
-<!-- ─── NAV ─── -->
+<!-- NAV -->
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-    <!-- Logo -->
-    <a href="index.html" class="flex items-center gap-2.5 shrink-0">
+    <a href="index.html" class="flex items-center shrink-0">
       <img src="parnassah hub.png" alt="ParnassaHub" class="h-16 w-auto" />
     </a>
-
-    <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600">
       <a href="find-jobs.html" class="nav-link hover:text-gray-900">Find Jobs</a>
       <a href="about.html"     class="nav-link hover:text-gray-900">About</a>
       <a href="#how-it-works"  class="nav-link hover:text-gray-900">How It Works</a>
     </div>
-
-    <!-- CTA buttons -->
     <div class="flex items-center gap-3">
-      <a href="signup.html" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Sign In</a>
-      <a href="signup.html" class="inline-flex text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition shadow-sm">Get Started</a>
-      <!-- Mobile menu button -->
-      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100" aria-label="Menu">
+      <span id="nav-auth">
+        <a href="signup.html" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Sign In</a>
+        <a href="signup.html" class="inline-flex text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition shadow-sm">Get Started</a>
+      </span>
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
   </nav>
-
-  <!-- Mobile menu -->
   <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-1">
     <a href="find-jobs.html" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Find Jobs</a>
     <a href="about.html"     class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">About</a>
-    <a href="#how-it-works"  class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">How It Works</a>
     <a href="signup.html"    class="block px-3 py-2 rounded-lg text-sm font-medium text-brand-500 hover:bg-brand-50">Sign In / Register</a>
   </div>
 </header>
 
-<!-- ─── HERO ─── -->
+<!-- HERO -->
 <section class="hero-gradient py-20 sm:py-28 px-4">
   <div class="max-w-4xl mx-auto text-center">
     <span class="inline-flex items-center gap-1.5 bg-brand-50 text-brand-600 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-brand-100">
       <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4"/></svg>
       Volunteer-run · Union County NJ &amp; Beyond
     </span>
-
     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight mb-5">
       Find meaningful work.<br/>
       <span class="text-brand-500">Build your parnassah.</span>
     </h1>
-
     <p class="text-lg sm:text-xl text-gray-500 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
       A trusted, community-driven job board connecting talented people with real opportunities in Greater Union County NJ and across the region.
     </p>
-
-    <!-- Search bar -->
     <form action="find-jobs.html" method="GET" class="bg-white search-shadow rounded-2xl p-2 flex flex-col sm:flex-row gap-2 max-w-3xl mx-auto">
       <div class="flex-1 flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 focus-within:border-brand-400 focus-within:bg-white transition">
         <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z"/></svg>
-        <input name="q" type="text" placeholder="Job title, keyword, or company…" class="w-full bg-transparent text-sm text-gray-800 placeholder-gray-400 focus:outline-none" />
+        <input name="q" type="text" placeholder="Job title, keyword…" class="w-full bg-transparent text-sm text-gray-800 placeholder-gray-400 focus:outline-none" />
       </div>
       <div class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 focus-within:border-brand-400 focus-within:bg-white transition sm:w-52">
         <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         <select name="location" class="w-full bg-transparent text-sm text-gray-600 focus:outline-none appearance-none cursor-pointer">
           <option value="">All Locations</option>
-          <option>Greater Lakewood Area</option>
-          <option>Linden NJ</option>
-          <option>Monsey</option>
-          <option>New Jersey</option>
-          <option>New York City</option>
-          <option>Newark</option>
-          <option>Northern New Jersey</option>
-          <option>Remote</option>
-          <option>Union County</option>
-          <option>Worldwide</option>
+          <option>Greater Lakewood Area</option><option>Linden NJ</option><option>Monsey</option>
+          <option>New Jersey</option><option>New York City</option><option>Newark</option>
+          <option>Northern New Jersey</option><option>Remote</option><option>Union County</option><option>Worldwide</option>
         </select>
       </div>
-      <button type="submit" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition shadow-sm whitespace-nowrap">
-        Search Jobs
-      </button>
+      <button type="submit" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition shadow-sm whitespace-nowrap">Search Jobs</button>
     </form>
-
-    <!-- Stats row -->
     <div class="flex flex-wrap justify-center gap-6 mt-10 text-sm text-gray-500">
-      <span class="flex items-center gap-1.5"><span class="font-semibold text-gray-800">150+</span> Active Listings</span>
+      <span class="flex items-center gap-1.5"><span id="stat-jobs" class="font-semibold text-gray-800">—</span> Active Listings</span>
       <span class="text-gray-300">|</span>
       <span class="flex items-center gap-1.5"><span class="font-semibold text-gray-800">14</span> Job Categories</span>
       <span class="text-gray-300">|</span>
@@ -141,90 +103,59 @@
   </div>
 </section>
 
-<!-- ─── CATEGORIES ─── -->
+<!-- CATEGORIES -->
 <section class="py-16 px-4 bg-gray-50/60 border-y border-gray-100">
   <div class="max-w-7xl mx-auto">
     <div class="text-center mb-10">
       <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Browse by Category</h2>
       <p class="text-gray-500 text-sm">Explore openings across industries</p>
     </div>
-
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-      <!-- category card macro -->
-      <a href="find-jobs.html?cat=accounting" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Accounting+%26+Auditing" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Accounting &amp; Auditing</span>
       </a>
-
-      <a href="find-jobs.html?cat=admin" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-        </div>
-        <span class="text-xs font-semibold text-gray-700 leading-snug">Admin Support</span>
-      </a>
-
-      <a href="find-jobs.html?cat=finance" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Finance+%26+Banking" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Finance &amp; Banking</span>
       </a>
-
-      <a href="find-jobs.html?cat=education" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Admin+Support" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+        <span class="text-xs font-semibold text-gray-700 leading-snug">Admin Support</span>
+      </a>
+      <a href="find-jobs.html?cat=Education" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Education</span>
       </a>
-
-      <a href="find-jobs.html?cat=sales" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Sales+%26+Marketing" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Sales &amp; Marketing</span>
       </a>
-
-      <a href="find-jobs.html?cat=hr" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Human+Resources" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Human Resources</span>
       </a>
-
-      <a href="find-jobs.html?cat=realestate" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Real+Estate" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Real Estate</span>
       </a>
-
-      <a href="find-jobs.html?cat=operations" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Operations" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Operations</span>
       </a>
-
-      <a href="find-jobs.html?cat=transport" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
-          <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-        </div>
+      <a href="find-jobs.html?cat=Transportation+%26+Auto+Industry" class="card-hover group bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
         <span class="text-xs font-semibold text-gray-700 leading-snug">Transportation &amp; Auto</span>
       </a>
-
-      <a href="find-jobs.html" class="card-hover group bg-brand-500 border border-brand-500 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center cursor-pointer">
-        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-        </div>
+      <a href="find-jobs.html" class="card-hover group bg-brand-500 border border-brand-500 rounded-xl p-4 flex flex-col items-center gap-2.5 text-center">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></div>
         <span class="text-xs font-semibold text-white leading-snug">All Categories →</span>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ─── FEATURED JOBS ─── -->
+<!-- LATEST JOBS -->
 <section class="py-16 px-4">
   <div class="max-w-7xl mx-auto">
     <div class="flex items-center justify-between mb-8">
@@ -233,204 +164,69 @@
         <p class="text-gray-500 text-sm">Recently posted opportunities</p>
       </div>
       <a href="find-jobs.html" class="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600">
-        View all jobs
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        View all jobs <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
-
-    <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Job card template — repeated 6x with sample data -->
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">TC</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-green-50 text-green-700 rounded-full">Full Time</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Senior Accountant</h3>
-          <p class="text-sm text-gray-500">TechCorp Solutions</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Union County, NJ</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> $70k–$90k</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">RG</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-purple-50 text-purple-700 rounded-full">Part-Time</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Office Manager</h3>
-          <p class="text-sm text-gray-500">Rosenberg Group</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Linden, NJ</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> $45k–$55k</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">NR</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full">Remote</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Sales Representative</h3>
-          <p class="text-sm text-gray-500">NorthEast Realty</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Remote</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> Commission</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">FS</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-green-50 text-green-700 rounded-full">Full Time</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Marketing Coordinator</h3>
-          <p class="text-sm text-gray-500">Friedman &amp; Sons</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Newark, NJ</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> $55k–$70k</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">AB</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full">Volunteer</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Community Outreach Director</h3>
-          <p class="text-sm text-gray-500">Agudath B'nei</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> Union County</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> Volunteer</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-
-      <article class="card-hover bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-3">
-        <div class="flex items-start justify-between gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 text-sm font-bold text-gray-500">GS</div>
-          <span class="text-xs font-semibold px-2.5 py-1 bg-green-50 text-green-700 rounded-full">Full Time</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-gray-900 mb-0.5">Financial Analyst</h3>
-          <p class="text-sm text-gray-500">Goldman &amp; Schwartz</p>
-        </div>
-        <div class="flex flex-wrap gap-2 text-xs text-gray-500">
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg> New York City</span>
-          <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg> $85k–$110k</span>
-        </div>
-        <a href="#" class="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 rounded-xl py-2.5 transition">View Position</a>
-      </article>
-    </div>
-
+    <div id="featured-jobs-grid" class="grid gap-3 md:grid-cols-2 lg:grid-cols-3"></div>
     <div class="text-center mt-8">
       <a href="find-jobs.html" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-500 hover:text-brand-600 border border-brand-200 hover:border-brand-400 px-6 py-3 rounded-xl transition">
-        Browse all openings
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        Browse all openings <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ─── HOW IT WORKS ─── -->
+<!-- HOW IT WORKS -->
 <section id="how-it-works" class="py-16 px-4 bg-gray-50/60 border-y border-gray-100">
   <div class="max-w-5xl mx-auto">
     <div class="text-center mb-12">
       <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">How ParnassaHub Works</h2>
       <p class="text-gray-500 text-sm max-w-lg mx-auto">Simple, transparent, and built on trust</p>
     </div>
-
     <div class="grid sm:grid-cols-2 gap-8">
-      <!-- Job Seekers -->
       <div class="bg-white rounded-2xl border border-gray-200 p-7">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
-            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          </div>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div>
           <h3 class="font-bold text-gray-900">For Job Seekers</h3>
         </div>
         <ol class="space-y-4">
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Create your profile</p><p class="text-sm text-gray-500">Add your resume, contact info, and job preferences in minutes.</p></div>
-          </li>
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Find the right fit</p><p class="text-sm text-gray-500">Filter by category, location, and vacancy type to find roles you genuinely want.</p></div>
-          </li>
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Apply with confidence</p><p class="text-sm text-gray-500">Track your applications and saved jobs from your personal dashboard.</p></div>
-          </li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Create your profile</p><p class="text-sm text-gray-500">Add your resume, contact info, and job preferences in minutes.</p></div></li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Find the right fit</p><p class="text-sm text-gray-500">Filter by category, location, and vacancy type.</p></div></li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Apply with confidence</p><p class="text-sm text-gray-500">Track applications and saved jobs from your dashboard.</p></div></li>
         </ol>
-        <a href="signup.html?role=seeker" class="mt-6 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold transition">
-          Create Profile
-        </a>
+        <a href="signup.html?role=seeker" class="mt-6 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold transition">Create Profile</a>
       </div>
-
-      <!-- Employers -->
       <div class="bg-white rounded-2xl border border-gray-200 p-7">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
-            <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-          </div>
+          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center"><svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
           <h3 class="font-bold text-gray-900">For Employers</h3>
         </div>
         <ol class="space-y-4">
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Register your company</p><p class="text-sm text-gray-500">Set up your company profile with industry info and a contact person.</p></div>
-          </li>
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Post a vacancy</p><p class="text-sm text-gray-500">Use our guided multi-step form to publish a detailed, accurate listing.</p></div>
-          </li>
-          <li class="flex gap-3.5">
-            <span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span>
-            <div><p class="text-sm font-semibold text-gray-800 mb-0.5">Manage applications</p><p class="text-sm text-gray-500">Review candidates and manage active listings from your employer dashboard.</p></div>
-          </li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Register your company</p><p class="text-sm text-gray-500">Set up your company profile with industry info.</p></div></li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Post a vacancy</p><p class="text-sm text-gray-500">Use our guided multi-step form to publish a listing.</p></div></li>
+          <li class="flex gap-3.5"><span class="shrink-0 w-6 h-6 rounded-full bg-brand-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span><div><p class="text-sm font-semibold text-gray-800 mb-0.5">Manage applications</p><p class="text-sm text-gray-500">Review candidates from your employer dashboard.</p></div></li>
         </ol>
-        <a href="signup.html?role=employer" class="mt-6 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 text-brand-500 text-sm font-semibold transition">
-          Post a Job — Free
-        </a>
+        <a href="signup.html?role=employer" class="mt-6 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-brand-500 hover:bg-brand-50 text-brand-500 text-sm font-semibold transition">Post a Job — Free</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── CTA BANNER ─── -->
+<!-- CTA -->
 <section class="py-16 px-4">
-  <div class="max-w-4xl mx-auto bg-brand-500 rounded-2xl p-10 text-center text-white" style="background: linear-gradient(135deg,#1d62aa,#2877C9);">
+  <div class="max-w-4xl mx-auto rounded-2xl p-10 text-center text-white" style="background:linear-gradient(135deg,#1d62aa,#2877C9)">
     <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Ready to find your parnassah?</h2>
-    <p class="text-brand-100 text-sm sm:text-base mb-7 max-w-xl mx-auto">Join hundreds of job seekers and employers building meaningful careers and businesses in the community.</p>
+    <p class="text-brand-100 text-sm sm:text-base mb-7 max-w-xl mx-auto">Join job seekers and employers building meaningful careers in the community.</p>
     <div class="flex flex-col sm:flex-row gap-3 justify-center">
-      <a href="signup.html?role=seeker" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white text-brand-600 font-semibold rounded-xl text-sm hover:bg-brand-50 transition">
-        Find a Job
-      </a>
-      <a href="signup.html?role=employer" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-xl text-sm hover:bg-white/20 transition">
-        Post a Job — Free
-      </a>
+      <a href="signup.html?role=seeker" class="inline-flex items-center justify-center px-7 py-3 bg-white text-brand-600 font-semibold rounded-xl text-sm hover:bg-brand-50 transition">Find a Job</a>
+      <a href="signup.html?role=employer" class="inline-flex items-center justify-center px-7 py-3 bg-white/10 border border-white/30 text-white font-semibold rounded-xl text-sm hover:bg-white/20 transition">Post a Job — Free</a>
     </div>
   </div>
 </section>
 
-<!-- ─── SPONSOR BANNER ─── -->
+<!-- SPONSOR -->
 <section class="py-8 px-4 border-t border-gray-100">
-  <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
+  <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
     <span class="text-xs text-gray-400 uppercase tracking-widest font-medium">Proudly Sponsored By</span>
     <a href="https://omrgroup.net" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 hover:text-brand-500 transition border border-gray-200 rounded-xl px-4 py-2 hover:border-brand-200">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -441,12 +237,12 @@
   </div>
 </section>
 
-<!-- ─── FOOTER ─── -->
+<!-- FOOTER -->
 <footer class="bg-gray-950 text-gray-400 py-10 px-4">
   <div class="max-w-7xl mx-auto grid sm:grid-cols-3 gap-8">
     <div>
       <img src="parnassah hub.png" alt="ParnassaHub" class="h-12 w-auto brightness-0 invert mb-3 opacity-80" />
-      <p class="text-xs leading-relaxed text-gray-500">A volunteer-run job board serving the Greater Union County NJ area and the broader Jewish community.</p>
+      <p class="text-xs leading-relaxed text-gray-500">A volunteer-run job board serving Greater Union County NJ and the broader community.</p>
     </div>
     <div>
       <h4 class="text-xs font-semibold text-gray-300 uppercase tracking-widest mb-3">Quick Links</h4>
@@ -458,8 +254,8 @@
       </ul>
     </div>
     <div>
-      <h4 class="text-xs font-semibold text-gray-300 uppercase tracking-widest mb-3">Contact</h4>
-      <p class="text-xs leading-relaxed text-gray-500">Questions or feedback? Reach out to our volunteer team. We're here to help connect people with meaningful parnassah.</p>
+      <h4 class="text-xs font-semibold text-gray-300 uppercase tracking-widest mb-3">Sponsor</h4>
+      <a href="https://omrgroup.net" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-400 hover:text-white transition">ORTEK Group — omrgroup.net</a>
     </div>
   </div>
   <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600">
@@ -468,11 +264,52 @@
   </div>
 </footer>
 
+<script src="js/supabase-client.js"></script>
 <script>
-  document.getElementById('mobileMenuBtn').addEventListener('click', function() {
-    const menu = document.getElementById('mobileMenu');
-    menu.classList.toggle('hidden');
-  });
+  // Mobile menu
+  document.getElementById('mobileMenuBtn').addEventListener('click', () =>
+    document.getElementById('mobileMenu').classList.toggle('hidden')
+  )
+
+  // Update nav based on auth state
+  sb.auth.getUser().then(({ data: { user } }) => {
+    if (user) {
+      getCurrentProfile().then(profile => {
+        if (!profile) return
+        const dest = profile.role === 'employer' ? 'employer-dashboard.html' : 'jobseeker-dashboard.html'
+        document.getElementById('nav-auth').innerHTML = `
+          <a href="${dest}" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Dashboard</a>
+          <button onclick="signOut()" class="inline-flex text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition shadow-sm">Sign Out</button>
+        `
+      })
+    }
+  })
+
+  // Load latest jobs
+  ;(async () => {
+    const grid = document.getElementById('featured-jobs-grid')
+    grid.innerHTML = loadingState(6)
+
+    const { data: jobs, error } = await sb
+      .from('jobs')
+      .select('*, companies(name)')
+      .eq('active', true)
+      .order('created_at', { ascending: false })
+      .limit(6)
+
+    if (error || !jobs?.length) {
+      grid.innerHTML = emptyState('No listings yet — be the first to post a job!')
+    } else {
+      grid.innerHTML = jobs.map(j => jobCardHTML(j, true)).join('')
+    }
+
+    // Live count
+    const { count } = await sb
+      .from('jobs')
+      .select('*', { count: 'exact', head: true })
+      .eq('active', true)
+    document.getElementById('stat-jobs').textContent = count ?? 0
+  })()
 </script>
 </body>
 </html>
