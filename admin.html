@@ -11,15 +11,16 @@
       theme: {
         extend: {
           colors: { brand: { 50:'#ebf3ff',100:'#d6e8ff',200:'#add0ff',300:'#85b8ff',400:'#5c9ef5',500:'#2877C9',600:'#1d62aa',700:'#154d8b' } },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+          fontFamily: { sans: ['Nunito', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .tab-btn.active { background: #ebf3ff; color: #2877C9; font-weight: 600; }
+    body { font-family: 'Nunito', system-ui, sans-serif; }
+    .tab-btn.active { background: #ebf3ff; color: #2877C9; font-weight: 700; }
     .tab-btn.active svg { stroke: #2877C9; }
     input:focus, select:focus, textarea:focus { outline: none; }
   </style>
@@ -50,6 +51,10 @@
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         Users
         <span id="nav-users-count" class="ml-auto text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium"></span>
+      </button>
+      <button onclick="showTab('filters')" id="tab-btn-filters" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition text-gray-600 hover:bg-gray-50">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+        Filters
       </button>
     </nav>
     <div class="border-t border-gray-100 pt-4 mt-4">
@@ -197,6 +202,68 @@
         </div>
       </div>
 
+      <!-- ══════════════ FILTERS TAB ══════════════ -->
+      <div id="tab-filters" class="hidden">
+        <div class="mb-6">
+          <h2 class="text-base font-bold text-gray-900">Filter Options</h2>
+          <p class="text-sm text-gray-500 mt-1">Manage the categories, locations, and vacancy types used in job listings and site filters.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Categories -->
+          <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 class="text-sm font-bold text-gray-900">Categories</h3>
+                <p id="categories-count" class="text-xs text-gray-400 mt-0.5">Loading…</p>
+              </div>
+              <button onclick="openFilterModal('category')" class="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-lg transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Add
+              </button>
+            </div>
+            <ul id="categories-list" class="divide-y divide-gray-100 overflow-y-auto max-h-96">
+              <li class="px-5 py-4 text-sm text-gray-400 text-center">Loading…</li>
+            </ul>
+          </div>
+
+          <!-- Locations -->
+          <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 class="text-sm font-bold text-gray-900">Locations</h3>
+                <p id="locations-count" class="text-xs text-gray-400 mt-0.5">Loading…</p>
+              </div>
+              <button onclick="openFilterModal('location')" class="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-lg transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Add
+              </button>
+            </div>
+            <ul id="locations-list" class="divide-y divide-gray-100 overflow-y-auto max-h-96">
+              <li class="px-5 py-4 text-sm text-gray-400 text-center">Loading…</li>
+            </ul>
+          </div>
+
+          <!-- Vacancy Types -->
+          <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 class="text-sm font-bold text-gray-900">Vacancy Types</h3>
+                <p id="vacancy-types-count" class="text-xs text-gray-400 mt-0.5">Loading…</p>
+              </div>
+              <button onclick="openFilterModal('vacancy_type')" class="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-lg transition">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Add
+              </button>
+            </div>
+            <ul id="vacancy-types-list" class="divide-y divide-gray-100 overflow-y-auto max-h-96">
+              <li class="px-5 py-4 text-sm text-gray-400 text-center">Loading…</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -236,29 +303,18 @@
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Category *</label>
             <select id="job-f-category" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
               <option value="">Select…</option>
-              <option>Accounting &amp; Auditing</option><option>Admin Support</option>
-              <option>Administration &amp; Middle Mgmt</option><option>Education</option>
-              <option>Finance &amp; Banking</option><option>Human Resources</option>
-              <option>Marketing / Advertising / PR</option><option>Office Manager &amp; Secretary</option>
-              <option>Operations</option><option>Real Estate</option><option>Religious</option>
-              <option>Sales &amp; Marketing</option><option>Secretarial / Clerical</option>
-              <option>Transportation &amp; Auto Industry</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Vacancy Type *</label>
             <select id="job-f-type" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
               <option value="">Select…</option>
-              <option>Full Time</option><option>Part-Time</option><option>Commission</option><option>Volunteer</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Location *</label>
             <select id="job-f-location" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
               <option value="">Select…</option>
-              <option>Greater Lakewood Area</option><option>Linden NJ</option><option>Monsey</option>
-              <option>New Jersey</option><option>New York City</option><option>Newark</option>
-              <option>Northern New Jersey</option><option>Remote</option><option>Union County</option><option>Worldwide</option>
             </select>
           </div>
           <div>
@@ -374,11 +430,52 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FILTER ADD / EDIT MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="filterModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('filterModal')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm pointer-events-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <h2 id="filter-modal-title" class="text-lg font-bold text-gray-900">Add Category</h2>
+        <button onclick="closeModal('filterModal')" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="filter-edit-id" />
+        <input type="hidden" id="filter-type" />
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Name *</label>
+          <input id="filter-f-name" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Sort Order</label>
+          <input id="filter-f-order" type="number" min="0" placeholder="0" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          <p class="text-xs text-gray-400 mt-1">Lower numbers appear first in dropdowns and filters.</p>
+        </div>
+      </div>
+      <div class="p-6 border-t border-gray-100 flex gap-3">
+        <button onclick="closeModal('filterModal')" class="flex-1 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Cancel</button>
+        <button id="filter-save-btn" onclick="saveFilter()" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/supabase-client.js"></script>
 <script>
   // ── Data cache ──────────────────────────────────────────
   let allJobs = [], allCompanies = [], allUsers = []
+  let allCategories = [], allLocations = [], allVacancyTypes = []
   let currentAdminId = null
+
+  const FILTER_CONFIG = {
+    category:     { table: 'job_categories', label: 'Category',     listId: 'categories-list',    countId: 'categories-count' },
+    location:     { table: 'job_locations',  label: 'Location',     listId: 'locations-list',     countId: 'locations-count' },
+    vacancy_type: { table: 'vacancy_types',  label: 'Vacancy Type', listId: 'vacancy-types-list', countId: 'vacancy-types-count' },
+  }
 
   // ── Init ───────────────────────────────────────────────
   ;(async () => {
@@ -388,12 +485,12 @@
     const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
     document.getElementById('sidebar-name').textContent = name
     document.getElementById('sidebar-avatar').textContent = initials(name)
-    await Promise.all([loadJobs(), loadCompanies(), loadUsers()])
+    await Promise.all([loadJobs(), loadCompanies(), loadUsers(), loadFilters()])
   })()
 
   // ── Tab switching ───────────────────────────────────────
   function showTab(tab) {
-    ;['jobs', 'companies', 'users'].forEach(t => {
+    ;['jobs', 'companies', 'users', 'filters'].forEach(t => {
       document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab)
       const btn = document.getElementById('tab-btn-' + t)
       btn.classList.toggle('active', t === tab)
@@ -410,7 +507,7 @@
     document.body.style.overflow = ''
   }
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') ['jobModal','companyModal','userModal'].forEach(closeModal)
+    if (e.key === 'Escape') ['jobModal', 'companyModal', 'userModal', 'filterModal'].forEach(closeModal)
   })
 
   // ── Table filter ────────────────────────────────────────
@@ -428,6 +525,147 @@
     el.textContent = msg
     document.body.appendChild(el)
     setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 350) }, 2800)
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // FILTERS
+  // ═══════════════════════════════════════════════════════
+
+  async function loadFilters() {
+    const [cats, locs, types] = await Promise.all([
+      sb.from('job_categories').select('*').order('sort_order').order('name'),
+      sb.from('job_locations').select('*').order('sort_order').order('name'),
+      sb.from('vacancy_types').select('*').order('sort_order').order('name'),
+    ])
+    if (cats.error)  { toast('Error loading categories: '   + cats.error.message, true); return }
+    if (locs.error)  { toast('Error loading locations: '    + locs.error.message, true); return }
+    if (types.error) { toast('Error loading vacancy types: ' + types.error.message, true); return }
+
+    allCategories   = cats.data  || []
+    allLocations    = locs.data  || []
+    allVacancyTypes = types.data || []
+
+    renderFilterList('category')
+    renderFilterList('location')
+    renderFilterList('vacancy_type')
+    populateFilterSelects()
+  }
+
+  function renderFilterList(type) {
+    const cfg  = FILTER_CONFIG[type]
+    const data = type === 'category' ? allCategories
+               : type === 'location' ? allLocations
+               : allVacancyTypes
+
+    document.getElementById(cfg.countId).textContent =
+      `${data.length} item${data.length !== 1 ? 's' : ''}`
+
+    const list = document.getElementById(cfg.listId)
+    if (!data.length) {
+      list.innerHTML = `<li class="px-5 py-5 text-sm text-gray-400 text-center">No ${cfg.label.toLowerCase()}s yet. Click Add to create one.</li>`
+      return
+    }
+    list.innerHTML = data.map(item => `
+      <li class="flex items-center justify-between px-5 py-3 hover:bg-gray-50/60 transition group">
+        <div>
+          <span class="text-sm text-gray-800 font-medium">${item.name}</span>
+          <span class="ml-2 text-xs text-gray-400">#${item.sort_order}</span>
+        </div>
+        <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition">
+          <button onclick="openFilterModal('${type}', ${item.id})" class="text-xs text-brand-500 hover:text-brand-600 font-semibold">Edit</button>
+          <button onclick="deleteFilter('${type}', ${item.id}, ${JSON.stringify(item.name)})" class="text-xs text-red-400 hover:text-red-600 font-semibold">Delete</button>
+        </div>
+      </li>`).join('')
+  }
+
+  function populateFilterSelects() {
+    const catSel = document.getElementById('job-f-category')
+    if (catSel) {
+      const cur = catSel.value
+      catSel.innerHTML = '<option value="">Select…</option>' +
+        allCategories.map(c => `<option value="${c.name}">${c.name}</option>`).join('')
+      catSel.value = cur
+    }
+    const locSel = document.getElementById('job-f-location')
+    if (locSel) {
+      const cur = locSel.value
+      locSel.innerHTML = '<option value="">Select…</option>' +
+        allLocations.map(l => `<option value="${l.name}">${l.name}</option>`).join('')
+      locSel.value = cur
+    }
+    const typSel = document.getElementById('job-f-type')
+    if (typSel) {
+      const cur = typSel.value
+      typSel.innerHTML = '<option value="">Select…</option>' +
+        allVacancyTypes.map(t => `<option value="${t.name}">${t.name}</option>`).join('')
+      typSel.value = cur
+    }
+  }
+
+  function openFilterModal(type, id = null) {
+    const cfg  = FILTER_CONFIG[type]
+    const data = type === 'category' ? allCategories
+               : type === 'location' ? allLocations
+               : allVacancyTypes
+
+    document.getElementById('filter-type').value    = type
+    document.getElementById('filter-edit-id').value = id || ''
+    document.getElementById('filter-modal-title').textContent =
+      id ? `Edit ${cfg.label}` : `Add ${cfg.label}`
+    document.getElementById('filter-save-btn').textContent =
+      id ? 'Save Changes' : `Add ${cfg.label}`
+
+    if (id) {
+      const item = data.find(x => x.id === id)
+      document.getElementById('filter-f-name').value  = item?.name        || ''
+      document.getElementById('filter-f-order').value = item?.sort_order ?? ''
+    } else {
+      document.getElementById('filter-f-name').value  = ''
+      document.getElementById('filter-f-order').value = data.length  // default to next in order
+    }
+
+    openModal('filterModal')
+    setTimeout(() => document.getElementById('filter-f-name').focus(), 50)
+  }
+
+  async function saveFilter() {
+    const type  = document.getElementById('filter-type').value
+    const id    = document.getElementById('filter-edit-id').value
+    const name  = document.getElementById('filter-f-name').value.trim()
+    const order = parseInt(document.getElementById('filter-f-order').value) || 0
+    const cfg   = FILTER_CONFIG[type]
+
+    if (!name) { toast('Name is required.', true); return }
+
+    const btn = document.getElementById('filter-save-btn')
+    btn.disabled = true
+    btn.textContent = 'Saving…'
+
+    const { error } = id
+      ? await sb.from(cfg.table).update({ name, sort_order: order }).eq('id', parseInt(id))
+      : await sb.from(cfg.table).insert({ name, sort_order: order })
+
+    btn.disabled = false
+    btn.textContent = id ? 'Save Changes' : `Add ${cfg.label}`
+
+    if (error) {
+      if (error.code === '23505') toast(`"${name}" already exists.`, true)
+      else toast('Error: ' + error.message, true)
+      return
+    }
+
+    closeModal('filterModal')
+    toast(id ? `${cfg.label} updated.` : `${cfg.label} added.`)
+    await loadFilters()
+  }
+
+  async function deleteFilter(type, id, name) {
+    const cfg = FILTER_CONFIG[type]
+    if (!confirm(`Delete "${name}"?\n\nExisting jobs using this value won't be changed, but it will no longer appear in dropdowns.`)) return
+    const { error } = await sb.from(cfg.table).delete().eq('id', id)
+    if (error) { toast('Error: ' + error.message, true); return }
+    toast(`${cfg.label} deleted.`)
+    await loadFilters()
   }
 
   // ═══════════════════════════════════════════════════════
@@ -483,6 +721,7 @@
   function editJobById(id) {
     const job = allJobs.find(j => j.id === id)
     if (!job) return
+    populateFilterSelects()
     document.getElementById('job-edit-id').value    = job.id
     document.getElementById('job-modal-title').textContent = 'Edit Job'
     document.getElementById('job-save-btn').textContent    = 'Save Changes'
@@ -503,6 +742,7 @@
   }
 
   function openJobModal() {
+    populateFilterSelects()
     document.getElementById('job-edit-id').value = ''
     document.getElementById('job-modal-title').textContent = 'Add Job'
     document.getElementById('job-save-btn').textContent    = 'Add Job'
@@ -596,7 +836,6 @@
       const jobCount = co.jobs?.[0]?.count || 0
       const abbr = initials(co.name)
       const ownerId = co.user_id ? co.user_id.slice(0, 16) + '…' : '—'
-      // find owner name from users cache
       const owner = allUsers.find(u => u.id === co.user_id)
       const ownerName = owner ? `${owner.first_name || ''} ${owner.last_name || ''}`.trim() || ownerId : ownerId
       return `
