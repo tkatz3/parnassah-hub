@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — ParnassaHub</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { brand: { 50:'#ebf3ff',100:'#d6e8ff',200:'#add0ff',300:'#85b8ff',400:'#5c9ef5',500:'#2877C9',600:'#1d62aa',700:'#154d8b' } },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .tab-btn.active { background: #ebf3ff; color: #2877C9; font-weight: 600; }
+    .tab-btn.active svg { stroke: #2877C9; }
+    input:focus, select:focus, textarea:focus { outline: none; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="w-60 shrink-0 bg-white border-r border-gray-100 flex flex-col py-5 px-4 fixed inset-y-0 left-0 z-30">
+    <a href="index.html" class="mb-6"><img src="parnassah hub.png" alt="ParnassaHub" class="h-14 w-auto" /></a>
+    <div class="flex items-center gap-2 mb-4 px-2">
+      <span class="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+      <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Admin Panel</span>
+    </div>
+    <nav class="flex-1 space-y-1 text-sm">
+      <button onclick="showTab('jobs')" id="tab-btn-jobs" class="tab-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition text-gray-600 hover:bg-gray-50">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h7"/></svg>
+        Jobs
+        <span id="nav-jobs-count" class="ml-auto text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium"></span>
+      </button>
+      <button onclick="showTab('companies')" id="tab-btn-companies" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition text-gray-600 hover:bg-gray-50">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        Companies
+        <span id="nav-companies-count" class="ml-auto text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium"></span>
+      </button>
+      <button onclick="showTab('users')" id="tab-btn-users" class="tab-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition text-gray-600 hover:bg-gray-50">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Users
+        <span id="nav-users-count" class="ml-auto text-xs bg-gray-100 text-gray-500 rounded-full px-2 py-0.5 font-medium"></span>
+      </button>
+    </nav>
+    <div class="border-t border-gray-100 pt-4 mt-4">
+      <div class="flex items-center gap-2.5 mb-3">
+        <div id="sidebar-avatar" class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-xs font-bold text-red-600 shrink-0">A</div>
+        <div class="min-w-0">
+          <p id="sidebar-name" class="text-xs font-semibold text-gray-900 leading-none truncate">Admin</p>
+          <p class="text-xs text-red-500 font-medium mt-0.5">Administrator</p>
+        </div>
+      </div>
+      <button onclick="signOut()" class="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-700 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition w-full">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="flex-1 ml-60">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-gray-100 px-8 h-16 flex items-center justify-between sticky top-0 z-20">
+      <h1 class="text-lg font-extrabold text-gray-900">Admin Panel</h1>
+      <span class="text-xs font-bold text-white bg-red-500 px-3 py-1 rounded-full tracking-wide uppercase">Admin</span>
+    </header>
+
+    <div class="px-8 py-8 max-w-7xl">
+
+      <!-- ══════════════ JOBS TAB ══════════════ -->
+      <div id="tab-jobs">
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Total Jobs</p>
+            <p id="stat-total-jobs" class="text-3xl font-extrabold text-gray-900">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Active</p>
+            <p id="stat-active-jobs" class="text-3xl font-extrabold text-green-600">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Inactive</p>
+            <p id="stat-inactive-jobs" class="text-3xl font-extrabold text-gray-400">—</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <h2 class="text-base font-bold text-gray-900">All Jobs</h2>
+            <input id="jobs-search" type="text" placeholder="Search…" oninput="filterTable('jobs-tbody','jobs-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+          </div>
+          <button onclick="openJobModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Job
+          </button>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 bg-gray-50/60 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                <th class="text-left px-5 py-3">Position</th>
+                <th class="text-left px-4 py-3 hidden lg:table-cell">Company</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Type</th>
+                <th class="text-left px-4 py-3 hidden xl:table-cell">Posted</th>
+                <th class="text-left px-4 py-3">Status</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobs-tbody" class="divide-y divide-gray-100">
+              <tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ COMPANIES TAB ══════════════ -->
+      <div id="tab-companies" class="hidden">
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Total Companies</p>
+            <p id="stat-total-companies" class="text-3xl font-extrabold text-gray-900">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Jobs Posted</p>
+            <p id="stat-companies-jobs" class="text-3xl font-extrabold text-brand-500">—</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <h2 class="text-base font-bold text-gray-900">All Companies</h2>
+          <input id="companies-search" type="text" placeholder="Search…" oninput="filterTable('companies-tbody','companies-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 bg-gray-50/60 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                <th class="text-left px-5 py-3">Company</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Owner</th>
+                <th class="text-left px-4 py-3">Jobs</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="companies-tbody" class="divide-y divide-gray-100">
+              <tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══════════════ USERS TAB ══════════════ -->
+      <div id="tab-users" class="hidden">
+        <div class="grid grid-cols-4 gap-4 mb-6">
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Total Users</p>
+            <p id="stat-total-users" class="text-3xl font-extrabold text-gray-900">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Admins</p>
+            <p id="stat-admins" class="text-3xl font-extrabold text-red-500">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Employers</p>
+            <p id="stat-employers" class="text-3xl font-extrabold text-brand-500">—</p>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Job Seekers</p>
+            <p id="stat-seekers" class="text-3xl font-extrabold text-gray-900">—</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <h2 class="text-base font-bold text-gray-900">All Users</h2>
+          <input id="users-search" type="text" placeholder="Search…" oninput="filterTable('users-tbody','users-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+        </div>
+        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-100 bg-gray-50/60 text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                <th class="text-left px-5 py-3">Name</th>
+                <th class="text-left px-4 py-3 hidden lg:table-cell">User ID</th>
+                <th class="text-left px-4 py-3">Role</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody" class="divide-y divide-gray-100">
+              <tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- JOB MODAL (Add / Edit) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="jobModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('jobModal')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl pointer-events-auto my-8">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <h2 id="job-modal-title" class="text-lg font-bold text-gray-900">Add Job</h2>
+        <button onclick="closeModal('jobModal')" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
+        <input type="hidden" id="job-edit-id" />
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Job Title *</label>
+            <input id="job-f-title" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Company *</label>
+            <select id="job-f-company" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white"></select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Status</label>
+            <select id="job-f-active" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Category *</label>
+            <select id="job-f-category" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+              <option value="">Select…</option>
+              <option>Accounting &amp; Auditing</option><option>Admin Support</option>
+              <option>Administration &amp; Middle Mgmt</option><option>Education</option>
+              <option>Finance &amp; Banking</option><option>Human Resources</option>
+              <option>Marketing / Advertising / PR</option><option>Office Manager &amp; Secretary</option>
+              <option>Operations</option><option>Real Estate</option><option>Religious</option>
+              <option>Sales &amp; Marketing</option><option>Secretarial / Clerical</option>
+              <option>Transportation &amp; Auto Industry</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Vacancy Type *</label>
+            <select id="job-f-type" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+              <option value="">Select…</option>
+              <option>Full Time</option><option>Part-Time</option><option>Commission</option><option>Volunteer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Location *</label>
+            <select id="job-f-location" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+              <option value="">Select…</option>
+              <option>Greater Lakewood Area</option><option>Linden NJ</option><option>Monsey</option>
+              <option>New Jersey</option><option>New York City</option><option>Newark</option>
+              <option>Northern New Jersey</option><option>Remote</option><option>Union County</option><option>Worldwide</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Salary Min</label>
+            <input id="job-f-sal-min" type="number" placeholder="e.g. 50000" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Salary Max</label>
+            <input id="job-f-sal-max" type="number" placeholder="e.g. 70000" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Pay Period</label>
+            <select id="job-f-period" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+              <option value="">Select…</option>
+              <option>Annual</option><option>Hourly</option><option>Daily</option>
+              <option>Commission Only</option><option>Unpaid / Volunteer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Contact Email</label>
+            <input id="job-f-email" type="email" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Contact Phone</label>
+            <input id="job-f-phone" type="tel" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Job Description *</label>
+            <textarea id="job-f-desc" rows="5" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 resize-none leading-relaxed"></textarea>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Requirements</label>
+            <textarea id="job-f-req" rows="3" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 resize-none leading-relaxed"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 border-t border-gray-100 flex gap-3">
+        <button onclick="closeModal('jobModal')" class="flex-1 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Cancel</button>
+        <button id="job-save-btn" onclick="saveJob()" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">Save Job</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- COMPANY EDIT MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="companyModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('companyModal')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md pointer-events-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <h2 class="text-lg font-bold text-gray-900">Edit Company</h2>
+        <button onclick="closeModal('companyModal')" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="company-edit-id" />
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Company Name *</label>
+          <input id="company-f-name" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+        </div>
+      </div>
+      <div class="p-6 border-t border-gray-100 flex gap-3">
+        <button onclick="closeModal('companyModal')" class="flex-1 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Cancel</button>
+        <button onclick="saveCompany()" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- USER EDIT MODAL -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="userModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('userModal')"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md pointer-events-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-100">
+        <h2 class="text-lg font-bold text-gray-900">Edit User</h2>
+        <button onclick="closeModal('userModal')" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <input type="hidden" id="user-edit-id" />
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">First Name</label>
+            <input id="user-f-first" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Last Name</label>
+            <input id="user-f-last" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Role</label>
+          <select id="user-f-role" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+            <option value="jobseeker">Job Seeker</option>
+            <option value="employer">Employer</option>
+            <option value="admin">Admin</option>
+          </select>
+          <p class="text-xs text-amber-600 mt-1.5">Setting a user to Admin grants full site access.</p>
+        </div>
+      </div>
+      <div class="p-6 border-t border-gray-100 flex gap-3">
+        <button onclick="closeModal('userModal')" class="flex-1 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition">Cancel</button>
+        <button onclick="saveUser()" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/supabase-client.js"></script>
+<script>
+  // ── Data cache ──────────────────────────────────────────
+  let allJobs = [], allCompanies = [], allUsers = []
+  let currentAdminId = null
+
+  // ── Init ───────────────────────────────────────────────
+  ;(async () => {
+    const profile = await requireRole('admin', 'index.html')
+    if (!profile) return
+    currentAdminId = profile.id
+    const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
+    document.getElementById('sidebar-name').textContent = name
+    document.getElementById('sidebar-avatar').textContent = initials(name)
+    await Promise.all([loadJobs(), loadCompanies(), loadUsers()])
+  })()
+
+  // ── Tab switching ───────────────────────────────────────
+  function showTab(tab) {
+    ;['jobs', 'companies', 'users'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('hidden', t !== tab)
+      const btn = document.getElementById('tab-btn-' + t)
+      btn.classList.toggle('active', t === tab)
+    })
+  }
+
+  // ── Modal helpers ───────────────────────────────────────
+  function openModal(id) {
+    document.getElementById(id).classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') ['jobModal','companyModal','userModal'].forEach(closeModal)
+  })
+
+  // ── Table filter ────────────────────────────────────────
+  function filterTable(tbodyId, inputId, attr) {
+    const q = document.getElementById(inputId).value.toLowerCase()
+    document.querySelectorAll(`#${tbodyId} tr[${attr}]`).forEach(row => {
+      row.style.display = row.getAttribute(attr).includes(q) ? '' : 'none'
+    })
+  }
+
+  // ── Toast ───────────────────────────────────────────────
+  function toast(msg, isError = false) {
+    const el = document.createElement('div')
+    el.className = `fixed bottom-5 right-5 z-[100] px-4 py-3 rounded-xl text-sm font-medium shadow-lg ${isError ? 'bg-red-500' : 'bg-gray-900'} text-white`
+    el.textContent = msg
+    document.body.appendChild(el)
+    setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 350) }, 2800)
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // JOBS
+  // ═══════════════════════════════════════════════════════
+
+  async function loadJobs() {
+    const { data, error } = await sb.from('jobs')
+      .select('*, companies(id, name)')
+      .order('created_at', { ascending: false })
+    if (error) { toast('Error loading jobs: ' + error.message, true); return }
+    allJobs = data || []
+    renderJobsTable()
+    const active = allJobs.filter(j => j.active).length
+    document.getElementById('stat-total-jobs').textContent    = allJobs.length
+    document.getElementById('stat-active-jobs').textContent   = active
+    document.getElementById('stat-inactive-jobs').textContent = allJobs.length - active
+    document.getElementById('nav-jobs-count').textContent     = allJobs.length
+  }
+
+  function renderJobsTable() {
+    const tbody = document.getElementById('jobs-tbody')
+    if (!allJobs.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">No jobs found.</td></tr>'
+      return
+    }
+    tbody.innerHTML = allJobs.map(job => {
+      const company = job.companies?.name || '—'
+      const statusCls = job.active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
+      return `
+      <tr class="hover:bg-gray-50/50 transition" data-search="${(job.title + ' ' + company + ' ' + job.location).toLowerCase()}">
+        <td class="px-5 py-3.5">
+          <p class="font-semibold text-gray-900 text-sm">${job.title}</p>
+          <p class="text-xs text-gray-400 mt-0.5">${job.location}</p>
+        </td>
+        <td class="px-4 py-3.5 hidden lg:table-cell text-sm text-gray-500">${company}</td>
+        <td class="px-4 py-3.5 hidden md:table-cell">${vacancyBadge(job.vacancy_type)}</td>
+        <td class="px-4 py-3.5 hidden xl:table-cell text-xs text-gray-400">${timeAgo(job.created_at)}</td>
+        <td class="px-4 py-3.5">
+          <span class="text-xs font-semibold px-2.5 py-1 ${statusCls} rounded-full">${job.active ? 'Active' : 'Inactive'}</span>
+        </td>
+        <td class="px-4 py-3.5 text-right">
+          <div class="flex items-center gap-3 justify-end">
+            <button onclick="editJobById('${job.id}')" class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+            <button onclick="toggleJobActive('${job.id}', ${job.active})" class="text-xs ${job.active ? 'text-amber-500 hover:text-amber-600' : 'text-green-600 hover:text-green-700'} font-medium">${job.active ? 'Deactivate' : 'Activate'}</button>
+            <button onclick="deleteJob('${job.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">Delete</button>
+          </div>
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  function editJobById(id) {
+    const job = allJobs.find(j => j.id === id)
+    if (!job) return
+    document.getElementById('job-edit-id').value    = job.id
+    document.getElementById('job-modal-title').textContent = 'Edit Job'
+    document.getElementById('job-save-btn').textContent    = 'Save Changes'
+    document.getElementById('job-f-title').value    = job.title || ''
+    document.getElementById('job-f-category').value = job.category || ''
+    document.getElementById('job-f-type').value     = job.vacancy_type || ''
+    document.getElementById('job-f-location').value = job.location || ''
+    document.getElementById('job-f-desc').value     = job.description || ''
+    document.getElementById('job-f-req').value      = job.requirements || ''
+    document.getElementById('job-f-email').value    = job.contact_email || ''
+    document.getElementById('job-f-phone').value    = job.contact_phone || ''
+    document.getElementById('job-f-sal-min').value  = job.salary_min || ''
+    document.getElementById('job-f-sal-max').value  = job.salary_max || ''
+    document.getElementById('job-f-period').value   = job.pay_period || ''
+    document.getElementById('job-f-active').value   = job.active ? 'true' : 'false'
+    populateCompanySelect(job.company_id)
+    openModal('jobModal')
+  }
+
+  function openJobModal() {
+    document.getElementById('job-edit-id').value = ''
+    document.getElementById('job-modal-title').textContent = 'Add Job'
+    document.getElementById('job-save-btn').textContent    = 'Add Job'
+    ;['job-f-title','job-f-desc','job-f-req','job-f-email','job-f-phone','job-f-sal-min','job-f-sal-max'].forEach(id => {
+      document.getElementById(id).value = ''
+    })
+    ;['job-f-category','job-f-type','job-f-location','job-f-period'].forEach(id => {
+      document.getElementById(id).selectedIndex = 0
+    })
+    document.getElementById('job-f-active').value = 'true'
+    populateCompanySelect()
+    openModal('jobModal')
+  }
+
+  function populateCompanySelect(selectedId = null) {
+    const sel = document.getElementById('job-f-company')
+    sel.innerHTML = '<option value="">Select company…</option>' +
+      allCompanies.map(c => `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`).join('')
+  }
+
+  async function saveJob() {
+    const id = document.getElementById('job-edit-id').value
+    const payload = {
+      title:         document.getElementById('job-f-title').value.trim(),
+      company_id:    document.getElementById('job-f-company').value || null,
+      category:      document.getElementById('job-f-category').value || null,
+      vacancy_type:  document.getElementById('job-f-type').value || null,
+      location:      document.getElementById('job-f-location').value || null,
+      description:   document.getElementById('job-f-desc').value.trim() || null,
+      requirements:  document.getElementById('job-f-req').value.trim() || null,
+      contact_email: document.getElementById('job-f-email').value.trim() || null,
+      contact_phone: document.getElementById('job-f-phone').value.trim() || null,
+      salary_min:    parseInt(document.getElementById('job-f-sal-min').value) || null,
+      salary_max:    parseInt(document.getElementById('job-f-sal-max').value) || null,
+      pay_period:    document.getElementById('job-f-period').value || null,
+      active:        document.getElementById('job-f-active').value === 'true',
+    }
+    if (!payload.title || !payload.company_id || !payload.category || !payload.vacancy_type || !payload.location) {
+      toast('Please fill in all required fields.', true); return
+    }
+    const btn = document.getElementById('job-save-btn')
+    btn.disabled = true; btn.textContent = 'Saving…'
+    const { error } = id
+      ? await sb.from('jobs').update(payload).eq('id', id)
+      : await sb.from('jobs').insert(payload)
+    btn.disabled = false; btn.textContent = id ? 'Save Changes' : 'Add Job'
+    if (error) { toast('Error: ' + error.message, true); return }
+    closeModal('jobModal')
+    toast(id ? 'Job updated.' : 'Job created.')
+    await loadJobs()
+  }
+
+  async function toggleJobActive(jobId, currentActive) {
+    const { error } = await sb.from('jobs').update({ active: !currentActive }).eq('id', jobId)
+    if (error) { toast('Error: ' + error.message, true); return }
+    toast(currentActive ? 'Job deactivated.' : 'Job activated.')
+    await loadJobs()
+  }
+
+  async function deleteJob(jobId) {
+    if (!confirm('Permanently delete this job listing? This cannot be undone.')) return
+    const { error } = await sb.from('jobs').delete().eq('id', jobId)
+    if (error) { toast('Error: ' + error.message, true); return }
+    toast('Job deleted.')
+    await loadJobs()
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // COMPANIES
+  // ═══════════════════════════════════════════════════════
+
+  async function loadCompanies() {
+    const { data, error } = await sb.from('companies')
+      .select('*, jobs(count)')
+      .order('name')
+    if (error) { toast('Error loading companies: ' + error.message, true); return }
+    allCompanies = data || []
+    renderCompaniesTable()
+    document.getElementById('stat-total-companies').textContent = allCompanies.length
+    document.getElementById('stat-companies-jobs').textContent  = allCompanies.reduce((s, c) => s + (c.jobs?.[0]?.count || 0), 0)
+    document.getElementById('nav-companies-count').textContent  = allCompanies.length
+  }
+
+  function renderCompaniesTable() {
+    const tbody = document.getElementById('companies-tbody')
+    if (!allCompanies.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">No companies found.</td></tr>'
+      return
+    }
+    tbody.innerHTML = allCompanies.map(co => {
+      const jobCount = co.jobs?.[0]?.count || 0
+      const abbr = initials(co.name)
+      const ownerId = co.user_id ? co.user_id.slice(0, 16) + '…' : '—'
+      // find owner name from users cache
+      const owner = allUsers.find(u => u.id === co.user_id)
+      const ownerName = owner ? `${owner.first_name || ''} ${owner.last_name || ''}`.trim() || ownerId : ownerId
+      return `
+      <tr class="hover:bg-gray-50/50 transition" data-search="${co.name.toLowerCase()}">
+        <td class="px-5 py-3.5">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center text-xs font-bold text-brand-600 shrink-0">${abbr}</div>
+            <span class="font-semibold text-gray-900 text-sm">${co.name}</span>
+          </div>
+        </td>
+        <td class="px-4 py-3.5 hidden md:table-cell text-xs text-gray-500">${ownerName}</td>
+        <td class="px-4 py-3.5 text-sm text-gray-500">${jobCount} job${jobCount !== 1 ? 's' : ''}</td>
+        <td class="px-4 py-3.5 text-right">
+          <div class="flex items-center gap-3 justify-end">
+            <button onclick="editCompanyById('${co.id}')" class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+            <button onclick="deleteCompany('${co.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">Delete</button>
+          </div>
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  function editCompanyById(id) {
+    const co = allCompanies.find(c => c.id === id)
+    if (!co) return
+    document.getElementById('company-edit-id').value = co.id
+    document.getElementById('company-f-name').value  = co.name
+    openModal('companyModal')
+  }
+
+  async function saveCompany() {
+    const id   = document.getElementById('company-edit-id').value
+    const name = document.getElementById('company-f-name').value.trim()
+    if (!name) { toast('Company name is required.', true); return }
+    const { error } = await sb.from('companies').update({ name }).eq('id', id)
+    if (error) { toast('Error: ' + error.message, true); return }
+    closeModal('companyModal')
+    toast('Company updated.')
+    await loadCompanies()
+  }
+
+  async function deleteCompany(id) {
+    if (!confirm('Delete this company? All associated jobs will also be deleted.')) return
+    const { error } = await sb.from('companies').delete().eq('id', id)
+    if (error) { toast('Error: ' + error.message, true); return }
+    toast('Company deleted.')
+    await Promise.all([loadCompanies(), loadJobs()])
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // USERS
+  // ═══════════════════════════════════════════════════════
+
+  async function loadUsers() {
+    const { data, error } = await sb.from('profiles').select('*')
+    if (error) { toast('Error loading users: ' + error.message, true); return }
+    allUsers = data || []
+    renderUsersTable()
+    document.getElementById('stat-total-users').textContent = allUsers.length
+    document.getElementById('stat-admins').textContent      = allUsers.filter(u => u.role === 'admin').length
+    document.getElementById('stat-employers').textContent   = allUsers.filter(u => u.role === 'employer').length
+    document.getElementById('stat-seekers').textContent     = allUsers.filter(u => u.role === 'jobseeker').length
+    document.getElementById('nav-users-count').textContent  = allUsers.length
+  }
+
+  function renderUsersTable() {
+    const tbody = document.getElementById('users-tbody')
+    if (!allUsers.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">No users found.</td></tr>'
+      return
+    }
+    const ROLE_STYLE = {
+      admin:     'bg-red-50 text-red-600',
+      employer:  'bg-brand-50 text-brand-600',
+      jobseeker: 'bg-gray-100 text-gray-600',
+    }
+    const ROLE_LABEL = { admin: 'Admin', employer: 'Employer', jobseeker: 'Job Seeker' }
+    tbody.innerHTML = allUsers.map(u => {
+      const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'No name'
+      const abbr = initials(fullName)
+      const roleCls   = ROLE_STYLE[u.role]   || 'bg-gray-100 text-gray-500'
+      const roleLabel = ROLE_LABEL[u.role]   || u.role || '—'
+      const isSelf = u.id === currentAdminId
+      return `
+      <tr class="hover:bg-gray-50/50 transition" data-search="${fullName.toLowerCase()} ${u.role}">
+        <td class="px-5 py-3.5">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">${abbr}</div>
+            <div>
+              <span class="font-semibold text-gray-900 text-sm">${fullName}</span>
+              ${isSelf ? '<span class="ml-2 text-xs text-gray-400 font-normal">(you)</span>' : ''}
+            </div>
+          </div>
+        </td>
+        <td class="px-4 py-3.5 hidden lg:table-cell text-xs text-gray-400 font-mono">${u.id.slice(0, 20)}…</td>
+        <td class="px-4 py-3.5">
+          <span class="text-xs font-semibold px-2.5 py-1 ${roleCls} rounded-full">${roleLabel}</span>
+        </td>
+        <td class="px-4 py-3.5 text-right">
+          <div class="flex items-center gap-3 justify-end">
+            <button onclick="editUserById('${u.id}')" class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+            ${!isSelf ? `<button onclick="deleteUser('${u.id}')" class="text-xs text-red-400 hover:text-red-600 font-medium">Delete</button>` : ''}
+          </div>
+        </td>
+      </tr>`
+    }).join('')
+  }
+
+  function editUserById(id) {
+    const u = allUsers.find(u => u.id === id)
+    if (!u) return
+    document.getElementById('user-edit-id').value = u.id
+    document.getElementById('user-f-first').value = u.first_name || ''
+    document.getElementById('user-f-last').value  = u.last_name  || ''
+    document.getElementById('user-f-role').value  = u.role || 'jobseeker'
+    openModal('userModal')
+  }
+
+  async function saveUser() {
+    const id        = document.getElementById('user-edit-id').value
+    const firstName = document.getElementById('user-f-first').value.trim()
+    const lastName  = document.getElementById('user-f-last').value.trim()
+    const role      = document.getElementById('user-f-role').value
+    const { error } = await sb.from('profiles')
+      .update({ first_name: firstName, last_name: lastName, role })
+      .eq('id', id)
+    if (error) { toast('Error: ' + error.message, true); return }
+    closeModal('userModal')
+    toast('User updated.')
+    await loadUsers()
+  }
+
+  async function deleteUser(id) {
+    if (!confirm('Delete this user profile? This cannot be undone.')) return
+    const { error } = await sb.from('profiles').delete().eq('id', id)
+    if (error) { toast('Error: ' + error.message, true); return }
+    toast('User deleted.')
+    await loadUsers()
+  }
+</script>
+</body>
+</html>

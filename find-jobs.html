@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse and filter job listings across Greater Union County NJ and beyond. Filter by category, location, and job type." />
+  <meta property="og:title" content="Find Jobs — ParnassaHub" />
+  <meta property="og:description" content="Browse real job listings from community employers. Filter by category, location, and job type." />
+  <meta property="og:type" content="website" />
   <title>Find Jobs — ParnassaHub</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -17,22 +22,25 @@
               600: '#1d62aa', 700: '#154d8b', 800: '#0e376c', 900: '#08224e',
             }
           },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+          fontFamily: { sans: ['Nunito', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
+    body { font-family: 'Nunito', system-ui, sans-serif; }
     .card-hover { transition: box-shadow .2s ease, border-color .2s ease; }
     .card-hover:hover { box-shadow: 0 4px 20px rgba(40,119,201,.1); border-color: #add0ff; }
     .filter-check { accent-color: #2877C9; }
     input:focus, select:focus { outline: none; }
+    #skip-nav:focus { position:fixed;top:8px;left:8px;z-index:9999;padding:8px 16px;background:#2877C9;color:#fff;border-radius:8px;font-size:14px;font-weight:600; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen">
+
+<a href="#main-content" id="skip-nav" class="sr-only focus:not-sr-only">Skip to main content</a>
 
 <!-- NAV -->
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
@@ -43,18 +51,28 @@
     <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600">
       <a href="find-jobs.html" class="text-brand-500 font-semibold">Find Jobs</a>
       <a href="about.html" class="hover:text-gray-900">About</a>
+      <a href="index.html#how-it-works" class="hover:text-gray-900">How It Works</a>
     </div>
     <div class="flex items-center gap-3">
       <span id="nav-auth">
-        <a href="signup.html" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Sign In</a>
+        <a href="signup.html?view=signin" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Sign In</a>
         <a href="signup.html?role=employer" class="inline-flex text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition shadow-sm">Post a Job</a>
       </span>
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
     </div>
   </nav>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-1">
+    <a href="find-jobs.html" class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand-500 bg-brand-50">Find Jobs</a>
+    <a href="about.html"     class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">About</a>
+    <a href="index.html#how-it-works" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">How It Works</a>
+    <a href="signup.html?view=signin" class="block px-3 py-2 rounded-lg text-sm font-medium text-brand-500 hover:bg-brand-50">Sign In / Register</a>
+  </div>
 </header>
 
 <!-- SEARCH BAR -->
-<div class="bg-white border-b border-gray-200 py-5 px-4">
+<div id="main-content" class="bg-white border-b border-gray-200 py-5 px-4">
   <div class="max-w-7xl mx-auto">
     <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
       <div class="flex-1 flex items-center gap-3 px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus-within:border-brand-400 transition">
@@ -66,9 +84,11 @@
         <select id="searchLocation" name="location" class="w-full bg-transparent text-sm text-gray-600 focus:outline-none appearance-none cursor-pointer">
           <option value="">All Locations</option>
           <option>Greater Lakewood Area</option>
+          <option>Hillside NJ</option>
           <option>Linden NJ</option>
           <option>Monsey</option>
           <option>New Jersey</option>
+          <option>New York</option>
           <option>New York City</option>
           <option>Newark</option>
           <option>Northern New Jersey</option>
@@ -98,19 +118,19 @@
         <div class="mb-6">
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Category</h3>
           <div class="space-y-2" id="cat-filter-desktop">
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Accounting &amp; Auditing" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Accounting &amp; Auditing</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Accounting &amp; auditing" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Accounting &amp; Auditing</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Admin Support" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Admin Support</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Administration &amp; Middle Mgmt" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Administration &amp; Middle Mgmt</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Administration &amp; middle management" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Administration &amp; Middle Mgmt</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Education" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Education</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Finance &amp; Banking" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Finance &amp; Banking</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Finance &amp; banking" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Finance &amp; Banking</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Human Resources" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Human Resources</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Marketing / Advertising / PR" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Marketing / Advertising / PR</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Marketing advertising &amp; PR" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Marketing / Advertising / PR</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Office Manager &amp; Secretary" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Office Manager &amp; Secretary</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Operations" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Operations</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Real Estate" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Real Estate</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="operations" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Operations</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Real estate" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Real Estate</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Religious" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Religious</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Sales &amp; Marketing" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Sales &amp; Marketing</span></label>
-            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Secretarial / Clerical" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Secretarial / Clerical</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Secretarial clerical &amp; administrative" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Secretarial / Clerical</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check cat-check w-4 h-4 rounded" value="Transportation &amp; Auto Industry" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Transportation &amp; Auto</span></label>
           </div>
         </div>
@@ -122,9 +142,11 @@
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Location</h3>
           <div class="space-y-2">
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Greater Lakewood Area" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Greater Lakewood Area</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Hillside NJ" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Hillside NJ</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Linden NJ" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Linden NJ</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Monsey" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Monsey</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="New Jersey" /><span class="text-sm text-gray-700 group-hover:text-gray-900">New Jersey</span></label>
+            <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="New York" /><span class="text-sm text-gray-700 group-hover:text-gray-900">New York</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="New York City" /><span class="text-sm text-gray-700 group-hover:text-gray-900">New York City</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Newark" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Newark</span></label>
             <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" class="filter-check loc-check w-4 h-4 rounded" value="Northern New Jersey" /><span class="text-sm text-gray-700 group-hover:text-gray-900">Northern New Jersey</span></label>
@@ -155,7 +177,7 @@
       <!-- Results header -->
       <div class="flex items-center justify-between mb-5">
         <div>
-          <h1 class="text-lg font-bold text-gray-900"><span id="result-count">—</span> Jobs Found</h1>
+          <p class="text-lg font-bold text-gray-900"><span id="result-count">—</span> Jobs Found</p>
           <p class="text-sm text-gray-500" id="result-label">Loading listings…</p>
         </div>
         <div class="flex items-center gap-2">
@@ -163,7 +185,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             Filters
           </button>
-          <select id="sortOrder" class="text-sm border border-gray-200 rounded-xl px-3 py-2.5 bg-white focus:outline-none focus:border-brand-400 text-gray-600">
+          <select id="sortOrder" aria-label="Sort jobs by" class="text-sm border border-gray-200 rounded-xl px-3 py-2.5 bg-white focus:outline-none focus:border-brand-400 text-gray-600">
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
           </select>
@@ -200,15 +222,19 @@
     <div class="mb-6">
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Category</h3>
       <div class="space-y-2">
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Accounting &amp; Auditing" /><span class="text-sm text-gray-700">Accounting &amp; Auditing</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Accounting &amp; auditing" /><span class="text-sm text-gray-700">Accounting &amp; Auditing</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Admin Support" /><span class="text-sm text-gray-700">Admin Support</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Administration &amp; middle management" /><span class="text-sm text-gray-700">Administration &amp; Middle Mgmt</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Education" /><span class="text-sm text-gray-700">Education</span></label>
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Finance &amp; Banking" /><span class="text-sm text-gray-700">Finance &amp; Banking</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Finance &amp; banking" /><span class="text-sm text-gray-700">Finance &amp; Banking</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Human Resources" /><span class="text-sm text-gray-700">Human Resources</span></label>
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Marketing / Advertising / PR" /><span class="text-sm text-gray-700">Marketing / Advertising / PR</span></label>
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Operations" /><span class="text-sm text-gray-700">Operations</span></label>
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Real Estate" /><span class="text-sm text-gray-700">Real Estate</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Marketing advertising &amp; PR" /><span class="text-sm text-gray-700">Marketing / Advertising / PR</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Office Manager &amp; Secretary" /><span class="text-sm text-gray-700">Office Manager &amp; Secretary</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="operations" /><span class="text-sm text-gray-700">Operations</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Real estate" /><span class="text-sm text-gray-700">Real Estate</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Religious" /><span class="text-sm text-gray-700">Religious</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Sales &amp; Marketing" /><span class="text-sm text-gray-700">Sales &amp; Marketing</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Secretarial clerical &amp; administrative" /><span class="text-sm text-gray-700">Secretarial / Clerical</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check cat-check-m w-4 h-4 rounded" value="Transportation &amp; Auto Industry" /><span class="text-sm text-gray-700">Transportation &amp; Auto</span></label>
       </div>
     </div>
@@ -217,10 +243,17 @@
       <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Location</h3>
       <div class="space-y-2">
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Greater Lakewood Area" /><span class="text-sm text-gray-700">Greater Lakewood Area</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Hillside NJ" /><span class="text-sm text-gray-700">Hillside NJ</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Linden NJ" /><span class="text-sm text-gray-700">Linden NJ</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Monsey" /><span class="text-sm text-gray-700">Monsey</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="New Jersey" /><span class="text-sm text-gray-700">New Jersey</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="New York" /><span class="text-sm text-gray-700">New York</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="New York City" /><span class="text-sm text-gray-700">New York City</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Newark" /><span class="text-sm text-gray-700">Newark</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Northern New Jersey" /><span class="text-sm text-gray-700">Northern New Jersey</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Remote" /><span class="text-sm text-gray-700">Remote</span></label>
         <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Union County" /><span class="text-sm text-gray-700">Union County</span></label>
-        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="New York City" /><span class="text-sm text-gray-700">New York City</span></label>
+        <label class="flex items-center gap-2.5 cursor-pointer"><input type="checkbox" class="filter-check loc-check-m w-4 h-4 rounded" value="Worldwide" /><span class="text-sm text-gray-700">Worldwide</span></label>
       </div>
     </div>
     <div class="h-px bg-gray-100 mb-6"></div>
@@ -237,6 +270,91 @@
   </div>
 </div>
 
+<!-- JOB DETAIL MODAL -->
+<div id="jobModal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeJobModal()"></div>
+  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col pointer-events-auto">
+
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between gap-4 p-6 border-b border-gray-100 shrink-0">
+        <div class="flex items-start gap-4 min-w-0">
+          <div id="modal-abbr" class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center shrink-0 text-sm font-bold text-brand-600"></div>
+          <div class="min-w-0">
+            <h2 id="modal-title" class="text-lg font-bold text-gray-900 leading-tight"></h2>
+            <p id="modal-company" class="text-sm text-gray-500 mt-0.5"></p>
+          </div>
+        </div>
+        <button onclick="closeJobModal()" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body (scrollable) -->
+      <div class="overflow-y-auto flex-1 p-6 space-y-5">
+
+        <!-- Badges & meta -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div id="modal-badge"></div>
+          <span id="modal-ago" class="text-xs text-gray-400"></span>
+        </div>
+        <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            <span id="modal-location"></span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+            <span id="modal-salary"></span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a2 2 0 012-2h2z"/></svg>
+            <span id="modal-category"></span>
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="border-t border-gray-100 pt-5">
+          <h3 class="text-sm font-bold text-gray-700 mb-3">Job Description</h3>
+          <p id="modal-description" class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+
+        <!-- Requirements -->
+        <div id="modal-requirements-wrap" class="border-t border-gray-100 pt-5 hidden">
+          <h3 class="text-sm font-bold text-gray-700 mb-3">Requirements</h3>
+          <p id="modal-requirements" class="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap"></p>
+        </div>
+
+        <!-- How to Apply -->
+        <div id="modal-contact-section" class="border-t border-gray-100 pt-5">
+          <h3 class="text-sm font-bold text-gray-700 mb-3">How to Apply</h3>
+          <div class="bg-brand-50 border border-brand-100 rounded-xl p-4 space-y-3">
+            <div id="modal-contact-name-wrap" class="hidden">
+              <p class="text-xs text-gray-500 mb-1">Contact</p>
+              <p id="modal-contact-name" class="text-sm font-semibold text-gray-800"></p>
+            </div>
+            <div id="modal-email-wrap" class="hidden">
+              <p class="text-xs text-gray-500 mb-1">Email</p>
+              <a id="modal-email-link" href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-600 hover:text-brand-700 transition">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span id="modal-email-text"></span>
+              </a>
+            </div>
+            <div id="modal-phone-wrap" class="hidden">
+              <p class="text-xs text-gray-500 mb-1">Phone</p>
+              <a id="modal-phone-link" href="#" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-600 hover:text-brand-700 transition">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                <span id="modal-phone-text"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="js/supabase-client.js"></script>
 <script>
   // ── Auth-aware nav ─────────────────────────────────────
@@ -244,14 +362,61 @@
     if (user) {
       getCurrentProfile().then(profile => {
         if (!profile) return
-        const dest = profile.role === 'employer' ? 'employer-dashboard.html' : 'jobseeker-dashboard.html'
-        document.getElementById('nav-auth').innerHTML = `
-          <a href="${dest}" class="hidden sm:inline-flex text-sm font-medium text-brand-500 hover:text-brand-600 px-3 py-1.5 rounded-lg hover:bg-brand-50 transition">Dashboard</a>
-          <button onclick="signOut()" class="inline-flex text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 px-4 py-2 rounded-xl transition shadow-sm">Sign Out</button>
+        const firstName = profile.first_name || ''
+        const lastName  = profile.last_name  || ''
+        const displayName = firstName || user.email.split('@')[0]
+        const abbr = initials(`${firstName} ${lastName}`.trim() || displayName)
+        const isAdmin = profile.role === 'admin'
+        const isEmployer = profile.role === 'employer'
+        const dest = isAdmin ? 'admin.html' : isEmployer ? 'employer-dashboard.html' : 'jobseeker-dashboard.html'
+        const dashLabel = isAdmin ? 'Admin Panel' : 'Dashboard'
+        const avatarCls = isAdmin ? 'bg-red-100 text-red-600' : 'bg-brand-100 text-brand-600'
+        const extraItem = isEmployer ? `
+          <a href="post-job.html" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+            <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Post a Job
+          </a>` : ''
+        const navAuth = document.getElementById('nav-auth')
+        navAuth.style.cssText = 'position:relative;display:inline-flex;align-items:center'
+        navAuth.innerHTML = `
+          <button id="user-menu-btn" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 transition border border-gray-200">
+            <span class="w-7 h-7 rounded-full ${avatarCls} flex items-center justify-center text-xs font-bold shrink-0">${abbr}</span>
+            <span class="hidden sm:inline max-w-[120px] truncate">${displayName}</span>
+            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="user-dropdown" class="hidden absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-gray-200 shadow-lg py-1 z-50">
+            <div class="px-4 py-3 border-b border-gray-100">
+              <p class="text-xs font-semibold text-gray-900 truncate">${displayName}</p>
+              <p class="text-xs text-gray-400 mt-0.5 truncate">${user.email}</p>
+            </div>
+            <a href="${dest}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              ${dashLabel}
+            </a>
+            ${extraItem}
+            <div class="h-px bg-gray-100 mx-2 my-1"></div>
+            <button onclick="signOut()" class="flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 w-full text-left transition">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              Sign Out
+            </button>
+          </div>
         `
+        document.getElementById('user-menu-btn').addEventListener('click', e => {
+          e.stopPropagation()
+          document.getElementById('user-dropdown').classList.toggle('hidden')
+        })
+        document.addEventListener('click', () => {
+          const dd = document.getElementById('user-dropdown')
+          if (dd) dd.classList.add('hidden')
+        })
       })
     }
   })
+
+  // Mobile menu
+  document.getElementById('mobileMenuBtn').addEventListener('click', () =>
+    document.getElementById('mobileMenu').classList.toggle('hidden')
+  )
 
   // ── State ──────────────────────────────────────────────
   const PAGE_SIZE = 20
@@ -313,6 +478,7 @@
       .from('jobs')
       .select('*, companies(name)')
       .eq('active', true)
+      .order('posted_at', { ascending: asc, nullsFirst: false })
       .order('created_at', { ascending: asc })
       .range(offset, offset + PAGE_SIZE - 1)
 
@@ -361,9 +527,9 @@
     const user = await getCurrentUser()
     if (!user) { window.location.href = 'signup.html'; return }
     const { error } = await sb.from('applications').insert({ job_id: jobId, seeker_id: user.id })
-    if (error?.code === '23505') alert('You have already applied to this job.')
-    else if (error) alert('Could not submit application. Please try again.')
-    else alert('Application submitted!')
+    if (error?.code === '23505') showToast('You have already applied to this job.', 'warning')
+    else if (error) showToast('Could not submit application. Please try again.', 'error')
+    else showToast('Application submitted!', 'success')
   }
 
   async function toggleSave(jobId, btn) {
@@ -430,9 +596,99 @@
   // ── Load more ──────────────────────────────────────────
   document.getElementById('loadMoreBtn').addEventListener('click', () => loadJobs(true))
 
+  // ── Job Detail Modal ───────────────────────────────────
+  async function openJobModal(jobId) {
+    let job = currentJobs.find(j => j.id === jobId)
+    if (!job) {
+      const { data } = await sb.from('jobs').select('*, companies(name)').eq('id', jobId).single()
+      if (!data) return
+      job = data
+    }
+    const company = job.companies?.name || 'Unknown Company'
+    document.getElementById('modal-abbr').textContent = initials(company)
+    document.getElementById('modal-title').textContent = job.title
+    document.getElementById('modal-company').textContent = company
+    document.getElementById('modal-badge').innerHTML = vacancyBadge(job.vacancy_type)
+    document.getElementById('modal-ago').textContent = job.posted_at
+      ? 'Posted ' + new Date(job.posted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : timeAgo(job.created_at)
+    document.getElementById('modal-location').textContent = job.location
+    document.getElementById('modal-salary').textContent = formatSalary(job.salary_min, job.salary_max, job.vacancy_type)
+    document.getElementById('modal-category').textContent = job.category
+    document.getElementById('modal-description').textContent = job.description || 'No description provided.'
+
+    const reqWrap = document.getElementById('modal-requirements-wrap')
+    if (job.requirements) {
+      document.getElementById('modal-requirements').textContent = job.requirements
+      reqWrap.classList.remove('hidden')
+    } else {
+      reqWrap.classList.add('hidden')
+    }
+
+    const emailWrap = document.getElementById('modal-email-wrap')
+    const phoneWrap = document.getElementById('modal-phone-wrap')
+    const contactNameWrap = document.getElementById('modal-contact-name-wrap')
+    const contactSection = document.getElementById('modal-contact-section')
+
+    if (job.contact_name) {
+      document.getElementById('modal-contact-name').textContent = job.contact_name
+      contactNameWrap.classList.remove('hidden')
+    } else {
+      contactNameWrap.classList.add('hidden')
+    }
+
+    if (job.contact_email) {
+      document.getElementById('modal-email-link').href = `mailto:${job.contact_email}`
+      document.getElementById('modal-email-text').textContent = job.contact_email
+      emailWrap.classList.remove('hidden')
+    } else {
+      emailWrap.classList.add('hidden')
+    }
+
+    if (job.contact_phone) {
+      document.getElementById('modal-phone-link').href = `tel:${job.contact_phone}`
+      document.getElementById('modal-phone-text').textContent = job.contact_phone
+      phoneWrap.classList.remove('hidden')
+    } else {
+      phoneWrap.classList.add('hidden')
+    }
+
+    contactSection.style.display = (job.contact_name || job.contact_email || job.contact_phone) ? '' : 'none'
+
+    const modal = document.getElementById('jobModal')
+    modal.classList.remove('hidden')
+    modal.setAttribute('aria-modal', 'true')
+    modal.setAttribute('role', 'dialog')
+    document.body.style.overflow = 'hidden'
+    // Move focus into modal
+    const firstFocusable = modal.querySelector('button, [href], input')
+    if (firstFocusable) firstFocusable.focus()
+  }
+
+  function closeJobModal() {
+    document.getElementById('jobModal').classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+
+  // Focus trap inside modal
+  document.getElementById('jobModal').addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return
+    const modal = document.getElementById('jobModal')
+    const focusable = [...modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(el => !el.closest('.hidden'))
+    if (!focusable.length) return
+    const first = focusable[0], last = focusable[focusable.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  })
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeJobModal() })
+
   // ── Init ───────────────────────────────────────────────
   applyUrlParams()
-  loadJobs()
+  loadJobs().then(() => {
+    const jobParam = new URLSearchParams(location.search).get('job')
+    if (jobParam) openJobModal(jobParam)
+  })
 </script>
 </body>
 </html>

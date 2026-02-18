@@ -78,7 +78,9 @@ function jobCardHTML(job, compact = false) {
   const company = job.companies?.name || 'Unknown Company'
   const abbr    = initials(company)
   const salary  = formatSalary(job.salary_min, job.salary_max, job.vacancy_type)
-  const ago     = timeAgo(job.created_at)
+  const ago     = job.posted_at
+    ? new Date(job.posted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : timeAgo(job.created_at)
 
   if (compact) {
     // 3-col card for index.html
@@ -108,7 +110,7 @@ function jobCardHTML(job, compact = false) {
 
   // Full horizontal card for find-jobs.html
   return `
-  <article class="card-hover bg-white border border-gray-200 rounded-2xl p-5 cursor-pointer" data-job-id="${job.id}">
+  <article class="card-hover bg-white border border-gray-200 rounded-2xl p-5 cursor-pointer" data-job-id="${job.id}" onclick="openJobModal('${job.id}')">
     <div class="flex items-start gap-4">
       <div class="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center shrink-0 text-sm font-bold text-brand-600">${abbr}</div>
       <div class="flex-1 min-w-0">
@@ -119,7 +121,7 @@ function jobCardHTML(job, compact = false) {
           </div>
           <div class="flex items-center gap-2 shrink-0">
             ${vacancyBadge(job.vacancy_type)}
-            <button onclick="toggleSave('${job.id}', this)" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-500 text-gray-400 transition" aria-label="Save job">
+            <button onclick="event.stopPropagation(); toggleSave('${job.id}', this)" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-500 text-gray-400 transition" aria-label="Save job">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
             </button>
           </div>
@@ -140,10 +142,10 @@ function jobCardHTML(job, compact = false) {
           <span class="text-gray-400 ml-auto">${ago}</span>
         </div>
         ${job.description ? `<p class="text-sm text-gray-500 mt-3 line-clamp-2">${job.description}</p>` : ''}
-        <div class="flex items-center gap-3 mt-4">
-          <button onclick="applyToJob('${job.id}')" class="inline-flex items-center gap-1.5 px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-xl transition">Apply Now</button>
-          <a href="find-jobs.html?job=${job.id}" class="inline-flex items-center gap-1.5 px-5 py-2 border border-gray-200 hover:border-gray-300 text-gray-600 text-xs font-medium rounded-xl transition">View Details</a>
-        </div>
+        <p class="text-xs text-brand-500 font-medium mt-3 flex items-center gap-1">
+          View details
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </p>
       </div>
     </div>
   </article>`
@@ -156,6 +158,32 @@ function emptyState(message = 'No jobs found matching your filters.') {
     <p class="text-sm font-medium">${message}</p>
     <p class="text-xs mt-1">Check back soon — new listings are added regularly.</p>
   </div>`
+}
+
+// ─── Toast notifications ─────────────────────────────────────
+
+function showToast(message, type = 'success') {
+  let container = document.getElementById('toast-container')
+  if (!container) {
+    container = document.createElement('div')
+    container.id = 'toast-container'
+    container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none'
+    document.body.appendChild(container)
+  }
+  const colors = type === 'success'
+    ? 'background:#16a34a;color:#fff'
+    : type === 'error'
+    ? 'background:#dc2626;color:#fff'
+    : 'background:#d97706;color:#fff'
+  const toast = document.createElement('div')
+  toast.style.cssText = `pointer-events:auto;display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.15);transition:all .3s ease;transform:translateY(8px);opacity:0;${colors}`
+  toast.textContent = message
+  container.appendChild(toast)
+  requestAnimationFrame(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1' })
+  setTimeout(() => {
+    toast.style.transform = 'translateY(8px)'; toast.style.opacity = '0'
+    setTimeout(() => toast.remove(), 300)
+  }, 3500)
 }
 
 function loadingState(count = 3) {

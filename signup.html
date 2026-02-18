@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Join ParnassaHub — create a free account to browse and apply to jobs, or post openings for your company." />
+  <meta property="og:title" content="Join ParnassaHub — Sign Up" />
+  <meta property="og:description" content="Create a free account to find meaningful work or post jobs in Greater Union County NJ and beyond." />
+  <meta property="og:type" content="website" />
   <title>Join ParnassaHub — Sign Up</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -17,20 +22,24 @@
               600: '#1d62aa', 700: '#154d8b',
             }
           },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+          fontFamily: { sans: ['Nunito', 'system-ui', 'sans-serif'] }
         }
       }
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
+    body { font-family: 'Nunito', system-ui, sans-serif; }
     input:focus, textarea:focus, select:focus { outline:none; }
     .role-card { transition: border-color .2s, box-shadow .2s, background .2s; }
     .role-card.selected { border-color: #2877C9; background: #ebf3ff; box-shadow: 0 0 0 3px rgba(40,119,201,.15); }
     .step-dot { transition: background .3s, transform .3s; }
     .field-wrap:focus-within label { color: #2877C9; }
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 2.75rem; }
+    .pwd-toggle { position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9ca3af;background:none;border:none;padding:4px; }
+    .pwd-toggle:hover { color:#6b7280; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen flex flex-col">
@@ -63,7 +72,12 @@
         </div>
         <div class="field-wrap">
           <label class="block text-xs font-medium text-gray-600 mb-1.5">Password</label>
-          <input id="signin-password" type="password" placeholder="Your password" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+          <div class="pwd-wrap">
+            <input id="signin-password" type="password" placeholder="Your password" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+            <button type="button" class="pwd-toggle" onclick="togglePwd('signin-password', this)" aria-label="Show password">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
         </div>
         <button onclick="doSignIn()" id="signin-btn" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">
           Sign In
@@ -105,10 +119,10 @@
 
     <!-- SCREEN 2A: JOB SEEKER FORM -->
     <div id="screen-seeker" class="hidden">
-      <div class="flex items-center justify-center gap-2 mb-8">
-        <div id="dot1s" class="step-dot w-2 h-2 rounded-full bg-brand-500"></div>
-        <div id="dot2s" class="step-dot w-2 h-2 rounded-full bg-gray-200"></div>
-        <div id="dot3s" class="step-dot w-2 h-2 rounded-full bg-gray-200"></div>
+      <div class="flex items-center justify-center gap-2 mb-8" role="progressbar" aria-label="Sign up progress">
+        <div id="dot1s" class="step-dot w-2 h-2 rounded-full bg-brand-500" aria-label="Step 1: Personal info"></div>
+        <div id="dot2s" class="step-dot w-2 h-2 rounded-full bg-gray-200" aria-label="Step 2: Preferences"></div>
+        <div id="dot3s" class="step-dot w-2 h-2 rounded-full bg-gray-200" aria-label="Step 3: Confirmation"></div>
       </div>
 
       <div class="text-center mb-8">
@@ -143,7 +157,21 @@
           </div>
           <div class="field-wrap">
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Password *</label>
-            <input id="s-password" type="password" placeholder="Min. 8 characters" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+            <div class="pwd-wrap">
+              <input id="s-password" type="password" placeholder="Min. 8 characters" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+              <button type="button" class="pwd-toggle" onclick="togglePwd('s-password', this)" aria-label="Show password">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Confirm Password *</label>
+            <div class="pwd-wrap">
+              <input id="s-password-confirm" type="password" placeholder="Repeat your password" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+              <button type="button" class="pwd-toggle" onclick="togglePwd('s-password-confirm', this)" aria-label="Show confirm password">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <button onclick="seekerNextStep(2)" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition">Continue →</button>
@@ -169,13 +197,19 @@
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1.5">Preferred Locations</label>
-            <select id="pref-locs" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 focus:outline-none transition appearance-none" multiple size="5">
-              <option>Greater Lakewood Area</option><option>Linden NJ</option><option>Monsey</option>
-              <option>New Jersey</option><option>New York City</option><option>Newark</option>
-              <option>Northern New Jersey</option><option>Remote</option><option selected>Union County</option><option>Worldwide</option>
-            </select>
-            <p class="text-xs text-gray-400 mt-1.5">Hold Ctrl / Cmd to select multiple</p>
+            <label class="block text-xs font-medium text-gray-600 mb-2">Preferred Locations</label>
+            <div class="grid grid-cols-2 gap-2" id="pref-locs-checks">
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Greater Lakewood Area" />Greater Lakewood Area</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Hillside NJ" />Hillside NJ</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Linden NJ" />Linden NJ</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Monsey" />Monsey</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="New Jersey" />New Jersey</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="New York City" />New York City</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Newark" />Newark</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Remote" />Remote</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Union County" />Union County</label>
+              <label class="flex items-center gap-2 text-xs text-gray-700 cursor-pointer p-2 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/50 transition"><input type="checkbox" class="pref-loc w-3.5 h-3.5" style="accent-color:#2877C9" value="Worldwide" />Worldwide</label>
+            </div>
           </div>
 
           <div>
@@ -212,10 +246,10 @@
 
     <!-- SCREEN 2B: EMPLOYER FORM -->
     <div id="screen-employer" class="hidden">
-      <div class="flex items-center justify-center gap-2 mb-8">
-        <div id="dot1e" class="step-dot w-2 h-2 rounded-full bg-brand-500"></div>
-        <div id="dot2e" class="step-dot w-2 h-2 rounded-full bg-gray-200"></div>
-        <div id="dot3e" class="step-dot w-2 h-2 rounded-full bg-gray-200"></div>
+      <div class="flex items-center justify-center gap-2 mb-8" role="progressbar" aria-label="Sign up progress">
+        <div id="dot1e" class="step-dot w-2 h-2 rounded-full bg-brand-500" aria-label="Step 1: Company details"></div>
+        <div id="dot2e" class="step-dot w-2 h-2 rounded-full bg-gray-200" aria-label="Step 2: Contact person"></div>
+        <div id="dot3e" class="step-dot w-2 h-2 rounded-full bg-gray-200" aria-label="Step 3: Confirmation"></div>
       </div>
 
       <div class="text-center mb-8">
@@ -281,7 +315,21 @@
           </div>
           <div class="field-wrap">
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Password *</label>
-            <input id="e-password" type="password" placeholder="Min. 8 characters" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+            <div class="pwd-wrap">
+              <input id="e-password" type="password" placeholder="Min. 8 characters" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+              <button type="button" class="pwd-toggle" onclick="togglePwd('e-password', this)" aria-label="Show password">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Confirm Password *</label>
+            <div class="pwd-wrap">
+              <input id="e-password-confirm" type="password" placeholder="Repeat your password" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 transition" />
+              <button type="button" class="pwd-toggle" onclick="togglePwd('e-password-confirm', this)" aria-label="Show confirm password">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <div class="flex gap-3">
@@ -309,13 +357,25 @@
 </main>
 
 <footer class="text-center py-6 text-xs text-gray-400">
-  &copy; 2025 ParnassaHub &middot; Volunteer-run &middot;
+  &copy; 2026 ParnassaHub &middot; Volunteer-run &middot;
   <a href="about.html" class="hover:text-gray-600">About</a> &middot;
+  <a href="mailto:info@parnassahub.com" class="hover:text-gray-600">Contact</a> &middot;
   Sponsored by <a href="https://omrgroup.net" class="hover:text-gray-600">ORTEK Group</a>
 </footer>
 
 <script src="js/supabase-client.js"></script>
 <script>
+  function togglePwd(inputId, btn) {
+    const input = document.getElementById(inputId)
+    const isText = input.type === 'text'
+    input.type = isText ? 'password' : 'text'
+    btn.setAttribute('aria-label', isText ? 'Show password' : 'Hide password')
+    // Swap eye icon
+    btn.innerHTML = isText
+      ? '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>'
+      : '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>'
+  }
+
   let currentRole = null
 
   function showError(msg) {
@@ -347,7 +407,7 @@
     const { error } = await sb.auth.signInWithPassword({ email, password })
     if (error) { showError(error.message); btn.textContent = 'Sign In'; btn.disabled = false; return }
     const profile = await getCurrentProfile()
-    window.location.href = profile?.role === 'employer' ? 'employer-dashboard.html' : 'jobseeker-dashboard.html'
+    window.location.href = profile?.role === 'admin' ? 'admin.html' : profile?.role === 'employer' ? 'employer-dashboard.html' : 'jobseeker-dashboard.html'
   }
 
   function selectRole(role) {
@@ -405,11 +465,13 @@
     const last     = document.getElementById('s-last').value.trim()
     const phone    = document.getElementById('s-phone').value.trim()
 
+    const confirm = document.getElementById('s-password-confirm').value
     if (!first || !last || !email || !password) { showError('Please fill in all required fields.'); return }
     if (password.length < 8) { showError('Password must be at least 8 characters.'); return }
+    if (password !== confirm) { showError('Passwords do not match.'); return }
 
     const cats  = [...document.querySelectorAll('.pref-cat:checked')].map(el => el.value)
-    const locs  = [...document.getElementById('pref-locs').selectedOptions].map(o => o.value)
+    const locs  = [...document.querySelectorAll('.pref-loc:checked')].map(el => el.value)
     const types = [...document.querySelectorAll('.pref-type:checked')].map(el => el.value)
 
     const btn = document.getElementById('seeker-submit-btn')
@@ -449,8 +511,10 @@
     const industry = document.getElementById('e-industry').value
     const desc     = document.getElementById('e-desc').value.trim()
 
+    const eConfirm = document.getElementById('e-password-confirm').value
     if (!first || !last || !email || !password || !company) { showError('Please fill in all required fields.'); return }
     if (password.length < 8) { showError('Password must be at least 8 characters.'); return }
+    if (password !== eConfirm) { showError('Passwords do not match.'); return }
 
     const btn = document.getElementById('employer-submit-btn')
     btn.textContent = 'Creating account…'; btn.disabled = true
@@ -478,16 +542,18 @@
     employerNextStep(3)
   }
 
-  // Handle ?role= query param
+  // Handle ?role= and ?view= query params
   const params = new URLSearchParams(window.location.search)
   const roleParam = params.get('role')
   if (roleParam === 'seeker')   { selectRole('seeker');   continueToForm() }
   if (roleParam === 'employer') { selectRole('employer'); continueToForm() }
+  if (params.get('view') === 'signin') showSignIn()
 
   // Redirect if already logged in
   sb.auth.getUser().then(({ data: { user } }) => {
     if (user) getCurrentProfile().then(p => {
-      if (p?.role === 'employer') window.location.href = 'employer-dashboard.html'
+      if (p?.role === 'admin') window.location.href = 'admin.html'
+      else if (p?.role === 'employer') window.location.href = 'employer-dashboard.html'
       else if (p) window.location.href = 'jobseeker-dashboard.html'
     })
   })
