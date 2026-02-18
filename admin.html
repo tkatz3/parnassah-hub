@@ -99,10 +99,18 @@
             <p id="stat-inactive-jobs" class="text-3xl font-extrabold text-gray-400">—</p>
           </div>
         </div>
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <div class="flex items-center gap-3 flex-wrap">
             <h2 class="text-base font-bold text-gray-900">All Jobs</h2>
             <input id="jobs-search" type="text" placeholder="Search…" oninput="filterTable('jobs-tbody','jobs-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+            <label class="flex items-center gap-2 text-xs text-gray-500 font-medium cursor-pointer select-none">
+              <span class="relative inline-flex items-center">
+                <input type="checkbox" id="admin-show-inactive" class="sr-only peer" onchange="renderJobsTable()" />
+                <span class="w-9 h-5 bg-gray-200 rounded-full peer-checked:bg-brand-500 transition-colors"></span>
+                <span class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></span>
+              </span>
+              Show inactive
+            </label>
           </div>
           <button onclick="openJobModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -140,9 +148,15 @@
             <p id="stat-companies-jobs" class="text-3xl font-extrabold text-brand-500">—</p>
           </div>
         </div>
-        <div class="flex items-center gap-3 mb-4">
-          <h2 class="text-base font-bold text-gray-900">All Companies</h2>
-          <input id="companies-search" type="text" placeholder="Search…" oninput="filterTable('companies-tbody','companies-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <h2 class="text-base font-bold text-gray-900">All Companies</h2>
+            <input id="companies-search" type="text" placeholder="Search…" oninput="filterTable('companies-tbody','companies-search','data-search')" class="text-sm border border-gray-200 rounded-xl px-3 py-1.5 focus:border-brand-400 w-48" />
+          </div>
+          <button onclick="openCompanyModal()" class="inline-flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold rounded-xl transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Add Company
+          </button>
         </div>
         <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden">
           <table class="w-full text-sm">
@@ -163,7 +177,7 @@
 
       <!-- ══════════════ USERS TAB ══════════════ -->
       <div id="tab-users" class="hidden">
-        <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="grid grid-cols-5 gap-4 mb-6">
           <div class="bg-white border border-gray-200 rounded-2xl p-5">
             <p class="text-xs text-gray-500 mb-1 font-medium">Total Users</p>
             <p id="stat-total-users" class="text-3xl font-extrabold text-gray-900">—</p>
@@ -180,6 +194,10 @@
             <p class="text-xs text-gray-500 mb-1 font-medium">Job Seekers</p>
             <p id="stat-seekers" class="text-3xl font-extrabold text-gray-900">—</p>
           </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5">
+            <p class="text-xs text-gray-500 mb-1 font-medium">Pending Email</p>
+            <p id="stat-pending" class="text-3xl font-extrabold text-amber-500">—</p>
+          </div>
         </div>
         <div class="flex items-center gap-3 mb-4">
           <h2 class="text-base font-bold text-gray-900">All Users</h2>
@@ -190,13 +208,15 @@
             <thead>
               <tr class="border-b border-gray-100 bg-gray-50/60 text-xs text-gray-500 font-semibold uppercase tracking-wider">
                 <th class="text-left px-5 py-3">Name</th>
-                <th class="text-left px-4 py-3 hidden lg:table-cell">User ID</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Email</th>
                 <th class="text-left px-4 py-3">Role</th>
+                <th class="text-left px-4 py-3 hidden md:table-cell">Email Status</th>
+                <th class="text-left px-4 py-3 hidden lg:table-cell">Last Login</th>
                 <th class="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="users-tbody" class="divide-y divide-gray-100">
-              <tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
+              <tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -295,8 +315,8 @@
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1.5">Status</label>
             <select id="job-f-active" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
           <div>
@@ -360,23 +380,37 @@
 </div>
 
 <!-- ═══════════════════════════════════════════════════════ -->
-<!-- COMPANY EDIT MODAL -->
+<!-- COMPANY EDIT / CREATE MODAL -->
 <!-- ═══════════════════════════════════════════════════════ -->
 <div id="companyModal" class="fixed inset-0 z-50 hidden">
   <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('companyModal')"></div>
-  <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md pointer-events-auto">
+  <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg pointer-events-auto my-8">
       <div class="flex items-center justify-between p-6 border-b border-gray-100">
-        <h2 class="text-lg font-bold text-gray-900">Edit Company</h2>
+        <h2 id="company-modal-title" class="text-lg font-bold text-gray-900">Edit Company</h2>
         <button onclick="closeModal('companyModal')" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <div class="p-6 space-y-4">
+      <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
         <input type="hidden" id="company-edit-id" />
         <div>
           <label class="block text-xs font-medium text-gray-600 mb-1.5">Company Name *</label>
           <input id="company-f-name" type="text" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Owner</label>
+          <select id="company-f-owner" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
+            <option value="">— No owner —</option>
+          </select>
+          <p class="text-xs text-gray-400 mt-1">The owner can manage this company and its jobs from their account.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1.5">Associated Jobs</label>
+          <div id="company-jobs-list" class="border border-gray-200 rounded-xl divide-y divide-gray-100 max-h-48 overflow-y-auto">
+            <p class="px-3.5 py-3 text-xs text-gray-400">Loading jobs…</p>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Check jobs to assign them to this company. Unchecking removes the association.</p>
         </div>
       </div>
       <div class="p-6 border-t border-gray-100 flex gap-3">
@@ -415,7 +449,7 @@
         <div>
           <label class="block text-xs font-medium text-gray-600 mb-1.5">Role</label>
           <select id="user-f-role" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl text-sm focus:border-brand-400 appearance-none bg-white">
-            <option value="jobseeker">Job Seeker</option>
+            <option value="seeker">Job Seeker</option>
             <option value="employer">Employer</option>
             <option value="admin">Admin</option>
           </select>
@@ -485,7 +519,8 @@
     const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Admin'
     document.getElementById('sidebar-name').textContent = name
     document.getElementById('sidebar-avatar').textContent = initials(name)
-    await Promise.all([loadJobs(), loadCompanies(), loadUsers(), loadFilters()])
+    await Promise.all([loadJobs(), loadUsers(), loadFilters()])
+    await loadCompanies() // load after users so owner names resolve correctly
   })()
 
   // ── Tab switching ───────────────────────────────────────
@@ -679,20 +714,28 @@
     if (error) { toast('Error loading jobs: ' + error.message, true); return }
     allJobs = data || []
     renderJobsTable()
-    const active = allJobs.filter(j => j.active).length
-    document.getElementById('stat-total-jobs').textContent    = allJobs.length
+    const nonDrafts = allJobs.filter(j => j.status !== 'draft')
+    const active    = nonDrafts.filter(j => j.status === 'active').length
+    document.getElementById('stat-total-jobs').textContent    = nonDrafts.length
     document.getElementById('stat-active-jobs').textContent   = active
-    document.getElementById('stat-inactive-jobs').textContent = allJobs.length - active
-    document.getElementById('nav-jobs-count').textContent     = allJobs.length
+    document.getElementById('stat-inactive-jobs').textContent = nonDrafts.length - active
+    document.getElementById('nav-jobs-count').textContent     = nonDrafts.length
   }
 
   function renderJobsTable() {
     const tbody = document.getElementById('jobs-tbody')
-    if (!allJobs.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">No jobs found.</td></tr>'
+    const showInactive = document.getElementById('admin-show-inactive')?.checked ?? false
+    // Drafts are never shown in admin panel
+    const nonDrafts = allJobs.filter(j => j.status !== 'draft')
+    const visibleJobs = showInactive ? nonDrafts : nonDrafts.filter(j => j.status === 'active')
+    if (!visibleJobs.length) {
+      const msg = nonDrafts.length && !showInactive
+        ? 'All jobs are currently inactive. Toggle "Show inactive" to see them.'
+        : 'No jobs found.'
+      tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">${msg}</td></tr>`
       return
     }
-    tbody.innerHTML = allJobs.map(job => {
+    tbody.innerHTML = visibleJobs.map(job => {
       const company = job.companies?.name || '—'
       const statusCls = job.active ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
       return `
@@ -736,7 +779,7 @@
     document.getElementById('job-f-sal-min').value  = job.salary_min || ''
     document.getElementById('job-f-sal-max').value  = job.salary_max || ''
     document.getElementById('job-f-period').value   = job.pay_period || ''
-    document.getElementById('job-f-active').value   = job.active ? 'true' : 'false'
+    document.getElementById('job-f-active').value   = job.status || (job.active ? 'active' : 'inactive')
     populateCompanySelect(job.company_id)
     openModal('jobModal')
   }
@@ -752,14 +795,14 @@
     ;['job-f-category','job-f-type','job-f-location','job-f-period'].forEach(id => {
       document.getElementById(id).selectedIndex = 0
     })
-    document.getElementById('job-f-active').value = 'true'
+    document.getElementById('job-f-active').value = 'active'
     populateCompanySelect()
     openModal('jobModal')
   }
 
   function populateCompanySelect(selectedId = null) {
     const sel = document.getElementById('job-f-company')
-    sel.innerHTML = '<option value="">Select company…</option>' +
+    sel.innerHTML = '<option value="">— Unassigned —</option>' +
       allCompanies.map(c => `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`).join('')
   }
 
@@ -778,9 +821,10 @@
       salary_min:    parseInt(document.getElementById('job-f-sal-min').value) || null,
       salary_max:    parseInt(document.getElementById('job-f-sal-max').value) || null,
       pay_period:    document.getElementById('job-f-period').value || null,
-      active:        document.getElementById('job-f-active').value === 'true',
+      status:        document.getElementById('job-f-active').value,
+      active:        document.getElementById('job-f-active').value === 'active',
     }
-    if (!payload.title || !payload.company_id || !payload.category || !payload.vacancy_type || !payload.location) {
+    if (!payload.title || !payload.category || !payload.vacancy_type || !payload.location) {
       toast('Please fill in all required fields.', true); return
     }
     const btn = document.getElementById('job-save-btn')
@@ -796,7 +840,8 @@
   }
 
   async function toggleJobActive(jobId, currentActive) {
-    const { error } = await sb.from('jobs').update({ active: !currentActive }).eq('id', jobId)
+    const newActive = !currentActive
+    const { error } = await sb.from('jobs').update({ active: newActive, status: newActive ? 'active' : 'inactive' }).eq('id', jobId)
     if (error) { toast('Error: ' + error.message, true); return }
     toast(currentActive ? 'Job deactivated.' : 'Job activated.')
     await loadJobs()
@@ -858,23 +903,92 @@
     }).join('')
   }
 
-  function editCompanyById(id) {
-    const co = allCompanies.find(c => c.id === id)
-    if (!co) return
-    document.getElementById('company-edit-id').value = co.id
-    document.getElementById('company-f-name').value  = co.name
+  function populateCompanyModalOwnerDropdown(selectedUserId) {
+    const sel = document.getElementById('company-f-owner')
+    sel.innerHTML = '<option value="">— No owner —</option>'
+    allUsers.forEach(u => {
+      const name = `${u.first_name || ''} ${u.last_name || ''}`.trim() || u.email || u.id.slice(0, 8)
+      const opt = document.createElement('option')
+      opt.value = u.id
+      opt.textContent = `${name} (${u.role})`
+      if (u.id === selectedUserId) opt.selected = true
+      sel.appendChild(opt)
+    })
+  }
+
+  async function populateCompanyModalJobs(companyId) {
+    const list = document.getElementById('company-jobs-list')
+    list.innerHTML = '<p class="px-3.5 py-3 text-xs text-gray-400">Loading…</p>'
+    const { data: jobs, error } = await sb.from('jobs').select('id, title, company_id, companies(name)').order('title')
+    if (error) { list.innerHTML = '<p class="px-3.5 py-3 text-xs text-red-400">Error loading jobs.</p>'; return }
+    if (!jobs || !jobs.length) { list.innerHTML = '<p class="px-3.5 py-3 text-xs text-gray-400">No jobs in system.</p>'; return }
+    list.innerHTML = jobs.map(j => {
+      const checked = j.company_id === companyId ? 'checked' : ''
+      const currentCo = j.company_id && j.company_id !== companyId
+        ? `<span class="text-gray-400 ml-1">(currently: ${j.companies?.name || 'Unknown'})</span>` : ''
+      return `<label class="flex items-center gap-3 px-3.5 py-2.5 hover:bg-gray-50 cursor-pointer">
+        <input type="checkbox" class="company-job-cb rounded accent-brand-500" value="${j.id}" ${checked} />
+        <span class="text-sm text-gray-700">${j.title}${currentCo}</span>
+      </label>`
+    }).join('')
+  }
+
+  function openCompanyModal(id) {
+    document.getElementById('company-edit-id').value = ''
+    document.getElementById('company-f-name').value  = ''
+    document.getElementById('company-modal-title').textContent = id ? 'Edit Company' : 'Add Company'
+    if (id) {
+      const co = allCompanies.find(c => c.id === id)
+      if (!co) return
+      document.getElementById('company-edit-id').value = co.id
+      document.getElementById('company-f-name').value  = co.name
+      populateCompanyModalOwnerDropdown(co.user_id)
+      populateCompanyModalJobs(co.id)
+    } else {
+      populateCompanyModalOwnerDropdown(null)
+      document.getElementById('company-jobs-list').innerHTML = '<p class="px-3.5 py-3 text-xs text-gray-400">Save the company first to assign jobs.</p>'
+    }
     openModal('companyModal')
   }
 
+  function editCompanyById(id) { openCompanyModal(id) }
+
   async function saveCompany() {
-    const id   = document.getElementById('company-edit-id').value
-    const name = document.getElementById('company-f-name').value.trim()
+    const id      = document.getElementById('company-edit-id').value
+    const name    = document.getElementById('company-f-name').value.trim()
+    const ownerId = document.getElementById('company-f-owner').value || null
     if (!name) { toast('Company name is required.', true); return }
-    const { error } = await sb.from('companies').update({ name }).eq('id', id)
-    if (error) { toast('Error: ' + error.message, true); return }
+
+    let companyId = id
+    if (id) {
+      const { error } = await sb.from('companies').update({ name, user_id: ownerId }).eq('id', id)
+      if (error) { toast('Error: ' + error.message, true); return }
+    } else {
+      const { data, error } = await sb.from('companies').insert({ name, user_id: ownerId }).select('id').single()
+      if (error) { toast('Error: ' + error.message, true); return }
+      companyId = data.id
+    }
+
+    // Update job associations if editing an existing company
+    if (id) {
+      const checkboxes = document.querySelectorAll('.company-job-cb')
+      const toAssign   = []
+      const toRemove   = []
+      checkboxes.forEach(cb => {
+        if (cb.checked) toAssign.push(cb.value)
+        else toRemove.push(cb.value)
+      })
+      const promises = []
+      if (toAssign.length) promises.push(sb.from('jobs').update({ company_id: companyId }).in('id', toAssign))
+      if (toRemove.length) promises.push(sb.from('jobs').update({ company_id: null }).in('id', toRemove))
+      const results = await Promise.all(promises)
+      const jobErr = results.find(r => r.error)
+      if (jobErr) { toast('Company saved, but error updating some jobs: ' + jobErr.error.message, true); }
+    }
+
     closeModal('companyModal')
-    toast('Company updated.')
-    await loadCompanies()
+    toast(id ? 'Company updated.' : 'Company created.')
+    await Promise.all([loadCompanies(), loadJobs()])
   }
 
   async function deleteCompany(id) {
@@ -890,37 +1004,43 @@
   // ═══════════════════════════════════════════════════════
 
   async function loadUsers() {
-    const { data, error } = await sb.from('profiles').select('*')
+    const { data, error } = await sb.rpc('get_users_admin')
     if (error) { toast('Error loading users: ' + error.message, true); return }
     allUsers = data || []
     renderUsersTable()
     document.getElementById('stat-total-users').textContent = allUsers.length
     document.getElementById('stat-admins').textContent      = allUsers.filter(u => u.role === 'admin').length
     document.getElementById('stat-employers').textContent   = allUsers.filter(u => u.role === 'employer').length
-    document.getElementById('stat-seekers').textContent     = allUsers.filter(u => u.role === 'jobseeker').length
+    document.getElementById('stat-seekers').textContent     = allUsers.filter(u => u.role === 'seeker').length
+    document.getElementById('stat-pending').textContent     = allUsers.filter(u => !u.email_confirmed_at).length
     document.getElementById('nav-users-count').textContent  = allUsers.length
   }
 
   function renderUsersTable() {
     const tbody = document.getElementById('users-tbody')
     if (!allUsers.length) {
-      tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-10 text-center text-sm text-gray-400">No users found.</td></tr>'
+      tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-10 text-center text-sm text-gray-400">No users found.</td></tr>'
       return
     }
     const ROLE_STYLE = {
-      admin:     'bg-red-50 text-red-600',
-      employer:  'bg-brand-50 text-brand-600',
-      jobseeker: 'bg-gray-100 text-gray-600',
+      admin:    'bg-red-50 text-red-600',
+      employer: 'bg-brand-50 text-brand-600',
+      seeker:   'bg-gray-100 text-gray-600',
     }
-    const ROLE_LABEL = { admin: 'Admin', employer: 'Employer', jobseeker: 'Job Seeker' }
+    const ROLE_LABEL = { admin: 'Admin', employer: 'Employer', seeker: 'Job Seeker' }
     tbody.innerHTML = allUsers.map(u => {
-      const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'No name'
-      const abbr = initials(fullName)
-      const roleCls   = ROLE_STYLE[u.role]   || 'bg-gray-100 text-gray-500'
-      const roleLabel = ROLE_LABEL[u.role]   || u.role || '—'
-      const isSelf = u.id === currentAdminId
+      const fullName   = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'No name'
+      const abbr       = initials(fullName)
+      const roleCls    = ROLE_STYLE[u.role] || 'bg-gray-100 text-gray-500'
+      const roleLabel  = ROLE_LABEL[u.role] || u.role || '—'
+      const isSelf     = u.id === currentAdminId
+      const lastLogin  = u.last_sign_in_at ? timeAgo(u.last_sign_in_at) : 'Never'
+      const confirmed  = !!u.email_confirmed_at
+      const emailBadge = confirmed
+        ? '<span class="text-xs font-semibold px-2.5 py-1 bg-green-50 text-green-700 rounded-full">Confirmed</span>'
+        : '<span class="text-xs font-semibold px-2.5 py-1 bg-amber-50 text-amber-600 rounded-full">Pending</span>'
       return `
-      <tr class="hover:bg-gray-50/50 transition" data-search="${fullName.toLowerCase()} ${u.role}">
+      <tr class="hover:bg-gray-50/50 transition" data-search="${fullName.toLowerCase()} ${(u.email || '').toLowerCase()} ${u.role}">
         <td class="px-5 py-3.5">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">${abbr}</div>
@@ -930,10 +1050,12 @@
             </div>
           </div>
         </td>
-        <td class="px-4 py-3.5 hidden lg:table-cell text-xs text-gray-400 font-mono">${u.id.slice(0, 20)}…</td>
+        <td class="px-4 py-3.5 hidden md:table-cell text-xs text-gray-500">${u.email || '—'}</td>
         <td class="px-4 py-3.5">
           <span class="text-xs font-semibold px-2.5 py-1 ${roleCls} rounded-full">${roleLabel}</span>
         </td>
+        <td class="px-4 py-3.5 hidden md:table-cell">${emailBadge}</td>
+        <td class="px-4 py-3.5 hidden lg:table-cell text-xs text-gray-400">${lastLogin}</td>
         <td class="px-4 py-3.5 text-right">
           <div class="flex items-center gap-3 justify-end">
             <button onclick="editUserById('${u.id}')" class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
@@ -950,7 +1072,7 @@
     document.getElementById('user-edit-id').value = u.id
     document.getElementById('user-f-first').value = u.first_name || ''
     document.getElementById('user-f-last').value  = u.last_name  || ''
-    document.getElementById('user-f-role').value  = u.role || 'jobseeker'
+    document.getElementById('user-f-role').value  = u.role || 'seeker'
     openModal('userModal')
   }
 

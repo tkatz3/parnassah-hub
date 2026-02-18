@@ -121,8 +121,8 @@ function jobCardHTML(job, compact = false) {
           </div>
           <div class="flex items-center gap-2 shrink-0">
             ${vacancyBadge(job.vacancy_type)}
-            <button onclick="event.stopPropagation(); toggleSave('${job.id}', this)" class="w-8 h-8 rounded-xl border border-gray-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-500 text-gray-400 transition" aria-label="Save job">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <button onclick="event.stopPropagation(); toggleSave('${job.id}', this)" class="save-btn w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-300 transition-all duration-150 hover:border-brand-400 hover:text-brand-400 hover:bg-brand-50 hover:scale-110" data-job-id="${job.id}" aria-label="Save job" title="Save job">
+              <svg class="w-4 h-4 save-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
             </button>
           </div>
         </div>

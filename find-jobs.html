@@ -36,6 +36,10 @@
     .filter-check { accent-color: #2877C9; }
     input:focus, select:focus { outline: none; }
     #skip-nav:focus { position:fixed;top:8px;left:8px;z-index:9999;padding:8px 16px;background:#2877C9;color:#fff;border-radius:8px;font-size:14px;font-weight:600; }
+    /* Save button states */
+    .save-btn { cursor: pointer; }
+    .save-btn.saved { border-color: #2877C9 !important; background: #ebf3ff !important; color: #2877C9 !important; transform: scale(1); }
+    .save-btn.saved .save-icon { fill: #2877C9; stroke: #2877C9; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased min-h-screen">
@@ -520,29 +524,43 @@
     document.getElementById('load-more-wrap').style.display = jobs.length === PAGE_SIZE ? '' : 'none'
     offset += jobs.length
     renderChips(filters)
+    markSavedJobs()
   }
 
   // ── Job actions ────────────────────────────────────────
-  async function applyToJob(jobId) {
-    const user = await getCurrentUser()
-    if (!user) { window.location.href = 'signup.html'; return }
-    const { error } = await sb.from('applications').insert({ job_id: jobId, seeker_id: user.id })
-    if (error?.code === '23505') showToast('You have already applied to this job.', 'warning')
-    else if (error) showToast('Could not submit application. Please try again.', 'error')
-    else showToast('Application submitted!', 'success')
-  }
-
   async function toggleSave(jobId, btn) {
     const user = await getCurrentUser()
-    if (!user) { window.location.href = 'signup.html'; return }
-    const { data: existing } = await sb.from('saved_jobs').select('id').eq('job_id', jobId).eq('seeker_id', user.id).single()
-    if (existing) {
-      await sb.from('saved_jobs').delete().eq('id', existing.id)
-      btn.classList.remove('text-brand-500', 'border-brand-400')
+    if (!user) { window.location.href = 'signup.html?view=signin'; return }
+    const isSaved = btn.classList.contains('saved')
+    if (isSaved) {
+      const { data: existing } = await sb.from('saved_jobs').select('id').eq('job_id', jobId).eq('seeker_id', user.id).single()
+      if (existing) await sb.from('saved_jobs').delete().eq('id', existing.id)
+      btn.classList.remove('saved')
+      btn.title = 'Save job'
+      showToast('Removed from saved jobs.')
     } else {
-      await sb.from('saved_jobs').insert({ job_id: jobId, seeker_id: user.id })
-      btn.classList.add('text-brand-500', 'border-brand-400')
+      const { error } = await sb.from('saved_jobs').insert({ job_id: jobId, seeker_id: user.id })
+      if (!error) {
+        btn.classList.add('saved')
+        btn.title = 'Saved — click to remove'
+        showToast('Job saved!')
+      }
     }
+  }
+
+  // Mark already-saved jobs after loading
+  async function markSavedJobs() {
+    const user = await getCurrentUser()
+    if (!user) return
+    const { data: saved } = await sb.from('saved_jobs').select('job_id').eq('seeker_id', user.id)
+    if (!saved?.length) return
+    const savedIds = new Set(saved.map(s => s.job_id))
+    document.querySelectorAll('.save-btn').forEach(btn => {
+      if (savedIds.has(btn.dataset.jobId)) {
+        btn.classList.add('saved')
+        btn.title = 'Saved — click to remove'
+      }
+    })
   }
 
   // ── URL params → pre-fill filters ─────────────────────
