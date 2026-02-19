@@ -22,10 +22,13 @@ create table if not exists public.profiles (
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, role)
+  insert into public.profiles (id, role, first_name, last_name, phone)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data->>'role', 'seeker')
+    coalesce(new.raw_user_meta_data->>'role', 'seeker'),
+    new.raw_user_meta_data->>'first_name',
+    new.raw_user_meta_data->>'last_name',
+    new.raw_user_meta_data->>'phone'
   );
   return new;
 end;
